@@ -12,7 +12,7 @@ class ImageProcessor:
 
     def match_list(self, source_image,  image_loader: ImageLoader, images, threshold):
         for image_name in images:
-            rectangles, image_found = self._image_processor.match(source_image,
+            rectangles, image_found = self.match(source_image,
                                                                   image_loader.get_image(image_name),
                                                                   threshold)
 
