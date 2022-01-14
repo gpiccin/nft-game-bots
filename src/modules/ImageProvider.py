@@ -4,18 +4,29 @@ from src.modules.ImageLoader import ImageLoader
 
 
 class ImageProvider:
-    def __init__(self, images_path=None, image=None):
+    def __init__(self, images_path=None, image_names=None):
         if images_path:
-            self._images = ImageLoader(images_path)
-            self._images.load()
+            self._image_loader = ImageLoader(images_path)
+            self._image_loader.load()
 
-        self._image = image
+        self._image_names = image_names
 
-    def image(self):
-        if self._image is not None and self._images is not None:
-            return self._images.get_image(self._image)
+    def images(self) -> []:
+        if self._image_loader:
+            if self._image_names:
+                return self.load_images(self._image_names)
+            else:
+                return self.load_images(self._image_loader.get_file_names())
 
-        return ImageProvider.print_screen(0)
+        return [ImageProvider.print_screen(0)]
+
+    def load_images(self, image_names):
+        images = []
+
+        for image_name in image_names:
+            images.append(self._image_loader.get_image(image_name))
+
+        return images
 
     @staticmethod
     def print_screen(monitor_id: int):

@@ -68,4 +68,4 @@ class ImageProcessor:
 
     @staticmethod
     def draw_circle(image, center_coordinates):
-        cv2.circle(image, center_coordinates, 1, ImageProcessor.random_color(), 1)
+        cv2.circle(image, center_coordinates, 1, ImageProcessor.random_color(), 2)

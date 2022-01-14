@@ -107,7 +107,7 @@ def load_target_images(dir_path='./targets/'):
     return targets
 
 
-def load_test_images(dir_path='./test-_images/'):
+def load_test_images(dir_path='./test-_image_names/'):
     """ Programmatically loads all target_images of dir_path as a key:value where the
         key is the file name without the .png extension
 
@@ -119,7 +119,7 @@ def load_test_images(dir_path='./test-_images/'):
     targets = {}
 
     for file in file_names:
-        path = 'test-_images/' + file
+        path = 'test-_image_names/' + file
         targets[remove_suffix(file, '.png')] = cv2.imread(path)
 
     return targets
