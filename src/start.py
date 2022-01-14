@@ -1,4 +1,7 @@
 from bombcrypto.BombCryptoBot import BombCryptoBot
+from modules.ImageProvider import ImageProvider
 
-bomb_crypto_bot = BombCryptoBot()
-bomb_crypto_bot.run()
+image_provider = ImageProvider('./bombcrypto/test-images', 'connect_wallet.png')
+
+bomb_crypto_engine = BombCryptoBot()
+bomb_crypto_engine.run()

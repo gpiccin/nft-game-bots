@@ -1,20 +1,17 @@
-import cv2
-import numpy as np
-import mss
 import random
 
+import cv2
+import numpy as np
 from src.modules.ImageLoader import ImageLoader
 
 
 class ImageProcessor:
-    def __init__(self, debug):
-        self.debug = debug
+    def __init__(self, show_image=False):
+        self._show_image = show_image
 
     def match_list(self, source_image,  image_loader: ImageLoader, images, threshold):
         for image_name in images:
-            rectangles, image_found = self.match(source_image,
-                                                                  image_loader.get_image(image_name),
-                                                                  threshold)
+            rectangles, image_found = self.match(source_image, image_loader.get_image(image_name), threshold)
 
             if image_found:
                 return rectangles, image_found
@@ -42,32 +39,39 @@ class ImageProcessor:
 
         rectangles, weights = cv2.groupRectangles(rectangles, 1, 0.2)
 
-        if self.debug:
-            self._show_rectangle(source_image, rectangles)
+        if self._show_image:
+            self.show_rectangles(source_image, rectangles)
 
         return rectangles, self._has_target_image(rectangles)
-
-    @staticmethod
-    def print_screen(monitor_id: int):
-        with mss.mss() as sct:
-            monitor = sct.monitors[monitor_id]
-            sct_image = np.array(sct.grab(monitor))
-            # The screen part to capture
-            # monitor = {"top": 160, "left": 160, "width": 1000, "height": 135}
-
-            # Grab the data
-            return sct_image[:, :, :3]
 
     @staticmethod
     def _has_target_image(rectangles):
         return len(rectangles) != 0
 
     @staticmethod
-    def _show_rectangle(source_image, rectangles):
+    def show_rectangles(image, rectangles):
         """ Show a popup with rectangles showing the rectangles[(x, y, w, h),...]"""
 
         for (x, y, w, h) in rectangles:
-            cv2.rectangle(source_image, (x, y), (x + w, y + h), (255, 255, 255, 255), 2)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (255, 255, 255, 255), 2)
 
-        cv2.imshow('Rectangles found', source_image)
+        cv2.imshow('Rectangles found', image)
         cv2.waitKey(0)
+
+    @staticmethod
+    def _random_color():
+        return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+
+    @staticmethod
+    def show_circle(image, center_coordinates):
+        cv2.circle(image, center_coordinates, 2, ImageProcessor._random_color(), 2)
+        ImageProcessor.show(image)
+
+    @staticmethod
+    def show(image, title='Sample'):
+        cv2.imshow(title, image)
+        cv2.waitKey(0)
+
+    @staticmethod
+    def draw_circle(image, center_coordinates):
+        cv2.circle(image, center_coordinates, 1, ImageProcessor._random_color(), 1)
