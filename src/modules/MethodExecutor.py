@@ -31,7 +31,7 @@ class MethodExecutor:
                     if confirmed:
                         break
                     else:
-                        time.sleep(1)
+                        time.sleep(seconds_waiting / 4)
 
                 if confirmed:
                     return MethodExecutor.SUCCESS

@@ -29,7 +29,7 @@ class ConnectWallet:
                                           [self._image_processor.image],
                                           seconds_waiting=10)
 
-        if not execute_result:
+        if execute_result == MethodExecutor.FAIL:
             ActionExecutor.refresh_page()
 
     def sign(self, image):
