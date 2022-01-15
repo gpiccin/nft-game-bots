@@ -11,8 +11,7 @@ from src.modules.Behaviours import Behaviour, Click, Information
 
 
 class BombCryptoImageProcessor:
-    def __init__(self, image_provider: ImageProvider, match_image_threshold=0.8, debug=False):
-        self._debug = debug
+    def __init__(self, image_provider: ImageProvider, match_image_threshold=0.8):
         self._target_images = None
         self._match_image_threshold = match_image_threshold
         self._image_processor = ImageProcessor()
@@ -20,10 +19,10 @@ class BombCryptoImageProcessor:
         self._target_images = ImageLoader('./bombcrypto/target-images')
         self._target_images.load()
 
-    def image_provider(self):
-        return self._image_provider
+    def image(self):
+        return self._image_provider.image()
 
-    def actions(self) -> []:
+    def debug(self) -> []:
         images = self._image_provider.images()
 
         behaviours = []
@@ -49,6 +48,7 @@ class BombCryptoImageProcessor:
             self._append_action(self.green_bar(image), image_behaviours)
             self._append_action(self.full_bar(image), image_behaviours)
             self._append_action(self.hero_localization_bar(image), image_behaviours)
+            self._append_action(self.bombcrypto_logo(image), image_behaviours)
 
             self._debug_image(image, image_behaviours)
 
@@ -161,7 +161,7 @@ class BombCryptoImageProcessor:
         return None
 
     def go_to_heroes(self, image) -> Optional[GoToHeroesClick]:
-        images = ['go-to-heroes-0', 'go-to-heroes-1', 'go-to-heroes-2', 'go-to-heroes-3']
+        images = ['go-to-heroes-0', 'go-to-heroes-1', 'go-to-heroes-2']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
@@ -240,9 +240,40 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def _debug_image(self, image, actions):
-        if not self._debug:
-            return
+    def bombcrypto_logo(self, image) -> Optional[Information]:
+        images = ['bomb-logo-0', 'bomb-logo-0']
+        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
+                                                                self._match_image_threshold, False)
+
+        if has_image:
+            return Information(rectangle)
+
+        return None
+
+    def is_in_the_heroes_screen(self, image):
+        return self.hero_localization_bar(image) is not None
+
+    def is_in_the_game_play_screen(self, image):
+        return self.back(image) is not None
+
+    def is_sign_screen(self, image):
+        return self.sign_metamask(image) is not None
+
+    def is_loading_screen(self, image):
+        return self.bombcrypto_logo(image) is not None and self.connect_wallet(image) is None
+
+    def is_treasure_hunt_screen(self, image):
+        return self.treasure_hunt(image) is not None
+
+    def is_signed(self, image):
+        return self.is_loading_screen(image) or self.is_treasure_hunt_screen(image)
+
+    def is_connect_wallet_screen(self, image):
+        return self.connect_wallet(image) is not None
+
+    @staticmethod
+    def _debug_image(image, actions):
+        debug_image = image.copy()
 
         for action in actions:
             if isinstance(action, Click):
@@ -250,14 +281,14 @@ class BombCryptoImageProcessor:
                     points = action.points()
 
                     for point in points:
-                        ImageProcessor.draw_circle(image, point)
+                        ImageProcessor.draw_circle(debug_image, point)
 
                 continue
 
             if isinstance(action, Information):
-                ImageProcessor.draw_rectangles(image, action.rectangles())
+                ImageProcessor.draw_rectangles(debug_image, action.rectangles())
 
-        ImageProcessor.show(image)
+        ImageProcessor.show(debug_image)
 
     @staticmethod
     def _append_action(action, actions):

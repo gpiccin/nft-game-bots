@@ -1,5 +1,7 @@
 import mss
 import numpy as np
+
+from src.logger import log
 from src.modules.ImageLoader import ImageLoader
 
 
@@ -29,6 +31,7 @@ class ImageProvider:
             else:
                 return self.load_images([self._image_loader.get_file_names()[0]])[0]
 
+        log('Print screen')
         return ImageProvider.print_screen(0)
 
     def load_images(self, image_names):

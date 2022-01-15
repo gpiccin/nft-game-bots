@@ -358,7 +358,7 @@ def go_to_game():
 
 
 def refresh_heroes_position():
-    log('🔃 Refreshing Heroes Positions')
+    log('🔃 Refreshing GoToHeroes Positions')
     click_button(target_images['go-back-arrow'])
     click_button(target_images['treasure-hunt-icon'])
 

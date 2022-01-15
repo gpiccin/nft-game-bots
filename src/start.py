@@ -6,10 +6,18 @@ def run():
     # image_provider = ImageProvider('./bombcrypto/test-images', ['connect-wallet', 'heroes-list-1'])
     image_provider = ImageProvider()
 
-    bomb_crypto_engine = BombCryptoBot(image_provider, debug=True)
+    bot = BombCryptoBot(image_provider)
+    # return debug(bot)
+    loop(bot)
 
+
+def loop(bot: BombCryptoBot):
     while True:
-        bomb_crypto_engine.run()
+        bot.run()
+
+
+def debug(bot: BombCryptoBot):
+    bot._bomb_crypto_image_processor.debug()
 
 
 if __name__ == '__main__':

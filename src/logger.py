@@ -3,9 +3,6 @@ from src.date import formatted_date
 import sys
 import yaml
 
-stream = open("./config.yaml", 'r')
-config = yaml.safe_load(stream)
-
 last_log_is_progress = False
 
 COLOR = {
@@ -48,11 +45,6 @@ def log(message, progress_indicator=False, color='default'):
         last_log_is_progress = False
 
     print(formatted_message_colored)
-
-    if config['save_log_to_file']:
-        logger_file = open("./logs/logger.log", "a", encoding='utf-8')
-        logger_file.write(formatted_message + '\n')
-        logger_file.close()
 
     return True
 

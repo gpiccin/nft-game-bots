@@ -29,6 +29,14 @@ class Click(Information):
     def __init__(self, rectangles):
         super().__init__(rectangles)
 
+    def first_point(self):
+        points = self.points()
+
+        if len(points) == 0:
+            return None
+
+        return points[0]
+
     def points(self) -> []:
         points = []
 
