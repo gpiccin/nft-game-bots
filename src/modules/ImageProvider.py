@@ -5,6 +5,8 @@ from src.modules.ImageLoader import ImageLoader
 
 class ImageProvider:
     def __init__(self, images_path=None, image_names=None):
+        self._image_loader = None
+
         if images_path:
             self._image_loader = ImageLoader(images_path)
             self._image_loader.load()
@@ -19,6 +21,15 @@ class ImageProvider:
                 return self.load_images(self._image_loader.get_file_names())
 
         return [ImageProvider.print_screen(0)]
+
+    def image(self):
+        if self._image_loader:
+            if self._image_names:
+                return self.load_images([self._image_names[0]])[0]
+            else:
+                return self.load_images([self._image_loader.get_file_names()[0]])[0]
+
+        return ImageProvider.print_screen(0)
 
     def load_images(self, image_names):
         images = []

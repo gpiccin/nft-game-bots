@@ -1,91 +1,91 @@
-from src.modules.Behaviours import Click, Behaviour, Information
+from src.modules.Behaviours import Click, Information
 
 
-class ConnectWallet(Click):
+class ConnectWalletClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class OkError(Click):
+class OkErrorClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class Ok(Click):
+class OkClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class SignOnMetamask(Click):
+class SignOnMetamaskClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class Close(Click):
+class CloseClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class SendAllHeroesToWork(Click):
+class SendAllHeroesToWorkClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class SendHeroToWork(Click):
+class SendHeroToWorkClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class RestHero(Click):
+class RestHeroClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class Back(Click):
+class BackClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class TreasureHunt(Click):
+class TreasureHuntClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class RestAllHeroes(Click):
+class RestAllHeroesClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class GoToHeroes(Click):
+class GoToHeroesClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class SlideUpToGoHeroes(Click):
+class SlideUpToGoHeroesClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class SlideDownToGoHeroes(Click):
+class SlideDownToGoHeroesClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class GreenBar(Information):
+class GreenBarClick(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class RedBar(Information):
+class RedBarClick(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class FullBar(Information):
+class FullBarClick(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class HeroLocalizationBar(Information):
+class HeroLocalizationBarClick(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)

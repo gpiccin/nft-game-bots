@@ -3,25 +3,27 @@ from typing import Optional
 from src.modules.ImageProcessor import ImageProcessor
 from src.modules.ImageLoader import ImageLoader
 from src.modules.ImageProvider import ImageProvider
-from src.bombcrypto.BombCryptoBehaviours import ConnectWallet, OkError, Ok, SignOnMetamask, Close, Back, \
-    SendAllHeroesToWork, \
-    SendHeroToWork, RestHero, TreasureHunt, GoToHeroes, RestAllHeroes, SlideDownToGoHeroes, SlideUpToGoHeroes, RedBar, \
-    FullBar, HeroLocalizationBar, GreenBar
+from src.bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, CloseClick, BackClick, \
+    SendAllHeroesToWorkClick, \
+    SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, GoToHeroesClick, RestAllHeroesClick, SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, RedBarClick, \
+    FullBarClick, HeroLocalizationBarClick, GreenBarClick
 from src.modules.Behaviours import Behaviour, Click, Information
 
 
 class BombCryptoImageProcessor:
-    def __init__(self, image_provider: ImageProvider, match_image_threshold=0.8, debug=True):
+    def __init__(self, image_provider: ImageProvider, match_image_threshold=0.8, debug=False):
         self._debug = debug
         self._target_images = None
         self._match_image_threshold = match_image_threshold
         self._image_processor = ImageProcessor()
         self._image_provider = image_provider
-
-    def actions(self) -> []:
         self._target_images = ImageLoader('./bombcrypto/target-images')
         self._target_images.load()
 
+    def image_provider(self):
+        return self._image_provider
+
+    def actions(self) -> []:
         images = self._image_provider.images()
 
         behaviours = []
@@ -54,18 +56,18 @@ class BombCryptoImageProcessor:
 
         return behaviours
 
-    def connect_wallet(self, image) -> Optional[ConnectWallet]:
+    def connect_wallet(self, image) -> Optional[ConnectWalletClick]:
         images = ['connect-wallet-button-0', 'connect-wallet-button-1', 'connect-wallet-button-2',
                   'connect-wallet-button-3']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return ConnectWallet(rectangle)
+            return ConnectWalletClick(rectangle)
 
         return None
 
-    def error(self, image) -> Optional[OkError]:
+    def error(self, image) -> Optional[OkErrorClick]:
         images = ['error-0', 'error-1001-0', 'error-server-unstable-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
@@ -74,167 +76,167 @@ class BombCryptoImageProcessor:
             generic_ok = self.generic_ok(image)
 
             if generic_ok:
-                return OkError(generic_ok.rectangles())
+                return OkErrorClick(generic_ok.rectangles())
 
         return None
 
-    def generic_ok(self, image) -> Optional[Ok]:
+    def generic_ok(self, image) -> Optional[OkClick]:
         images = ['ok-0', 'ok-1', 'ok-2']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return Ok(rectangle)
+            return OkClick(rectangle)
 
         return None
 
-    def sign_metamask(self, image) -> Optional[SignOnMetamask]:
+    def sign_metamask(self, image) -> Optional[SignOnMetamaskClick]:
         images = ['sign-metamask-0', 'sign-metamask-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return SignOnMetamask(rectangle)
+            return SignOnMetamaskClick(rectangle)
 
         return None
 
-    def close(self, image) -> Optional[Close]:
+    def close(self, image) -> Optional[CloseClick]:
         images = ['close-button-0', 'close-button-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return Close(rectangle)
+            return CloseClick(rectangle)
 
         return None
 
-    def back(self, image) -> Optional[Back]:
+    def back(self, image) -> Optional[BackClick]:
         images = ['back-button-0', 'back-button-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return Back(rectangle)
+            return BackClick(rectangle)
 
         return None
 
-    def all_heroes_to_work(self, image) -> Optional[SendAllHeroesToWork]:
+    def all_heroes_to_work(self, image) -> Optional[SendAllHeroesToWorkClick]:
         images = ['send-all-heroes-to-work-button-0', 'send-all-heroes-to-work-button-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return SendAllHeroesToWork(rectangle)
+            return SendAllHeroesToWorkClick(rectangle)
 
         return None
 
-    def work(self, image) -> Optional[SendHeroToWork]:
+    def work(self, image) -> Optional[SendHeroToWorkClick]:
         images = ['work-button-0', 'work-button-1', 'work-button-2']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return SendHeroToWork(rectangle)
+            return SendHeroToWorkClick(rectangle)
 
         return None
 
-    def rest(self, image) -> Optional[RestHero]:
+    def rest(self, image) -> Optional[RestHeroClick]:
         images = ['rest-button-0', 'rest-button-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return RestHero(rectangle)
+            return RestHeroClick(rectangle)
 
         return None
 
-    def treasure_hunt(self, image) -> Optional[TreasureHunt]:
+    def treasure_hunt(self, image) -> Optional[TreasureHuntClick]:
         images = ['treasure-hunt-0', 'treasure-hunt-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return TreasureHunt(rectangle)
+            return TreasureHuntClick(rectangle)
 
         return None
 
-    def go_to_heroes(self, image) -> Optional[GoToHeroes]:
+    def go_to_heroes(self, image) -> Optional[GoToHeroesClick]:
         images = ['go-to-heroes-0', 'go-to-heroes-1', 'go-to-heroes-2', 'go-to-heroes-3']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return GoToHeroes(rectangle)
+            return GoToHeroesClick(rectangle)
 
         return None
 
-    def slide_up_to_go_heroes(self, image) -> Optional[SlideUpToGoHeroes]:
+    def slide_up_to_go_heroes(self, image) -> Optional[SlideUpToGoHeroesClick]:
         images = ['slide-up-go-heroes-0', 'slide-up-go-heroes-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return SlideUpToGoHeroes(rectangle)
+            return SlideUpToGoHeroesClick(rectangle)
 
         return None
 
-    def slide_down_to_return_to_work(self, image) -> Optional[SlideDownToGoHeroes]:
+    def slide_down_to_return_to_work(self, image) -> Optional[SlideDownToGoHeroesClick]:
         images = ['slide-down-go-heroes-0', 'slide-down-go-heroes-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return SlideDownToGoHeroes(rectangle)
+            return SlideDownToGoHeroesClick(rectangle)
 
         return None
 
-    def rest_all_heroes(self, image) -> Optional[RestAllHeroes]:
+    def rest_all_heroes(self, image) -> Optional[RestAllHeroesClick]:
         images = ['rest-all-heroes-button-0', 'rest-all-heroes-button-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return RestAllHeroes(rectangle)
+            return RestAllHeroesClick(rectangle)
 
         return None
 
-    def red_bar(self, image) -> Optional[RedBar]:
+    def red_bar(self, image) -> Optional[RedBarClick]:
         images = ['red-bar-0', 'red-bar-1', 'red-bar-2']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold, False)
 
         if has_image:
-            return RedBar(rectangle)
+            return RedBarClick(rectangle)
 
         return None
 
-    def green_bar(self, image) -> Optional[GreenBar]:
+    def green_bar(self, image) -> Optional[GreenBarClick]:
         images = ['green-bar-0', 'green-bar-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold, False)
 
         if has_image:
-            return GreenBar(rectangle)
+            return GreenBarClick(rectangle)
 
         return None
 
-    def hero_localization_bar(self, image) -> Optional[HeroLocalizationBar]:
+    def hero_localization_bar(self, image) -> Optional[HeroLocalizationBarClick]:
         images = ['hero-bar-0', 'hero-bar-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold, True)
 
         if has_image:
-            return HeroLocalizationBar(rectangle)
+            return HeroLocalizationBarClick(rectangle)
 
         return None
 
-    def full_bar(self, image) -> Optional[FullBar]:
+    def full_bar(self, image) -> Optional[FullBarClick]:
         images = ['full-bar-0', 'full-bar-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold, False)
 
         if has_image:
-            return FullBar(rectangle)
+            return FullBarClick(rectangle)
 
         return None
 
