@@ -5,8 +5,9 @@ from src.modules.ImageLoader import ImageLoader
 from src.modules.ImageProvider import ImageProvider
 from src.bombcrypto.BombCryptoBehaviours import ConnectWallet, OkError, Ok, SignOnMetamask, Close, Back, \
     SendAllHeroesToWork, \
-    SendHeroToWork, RestHero, TreasureHunt, GoToHeroes, RestAllHeroes, SlideDownToGoHeroes, SlideUpToGoHeroes
-from src.modules.Behaviours import Behaviour, Click
+    SendHeroToWork, RestHero, TreasureHunt, GoToHeroes, RestAllHeroes, SlideDownToGoHeroes, SlideUpToGoHeroes, RedBar, \
+    FullBar, HeroLocalizationBar, GreenBar
+from src.modules.Behaviours import Behaviour, Click, Information
 
 
 class BombCryptoImageProcessor:
@@ -23,31 +24,35 @@ class BombCryptoImageProcessor:
 
         images = self._image_provider.images()
 
-        actions = []
+        behaviours = []
 
         for image in images:
-            image_actions = []
+            image_behaviours = []
 
-            self._append_action(self.connect_wallet(image), image_actions)
-            self._append_action(self.error(image), image_actions)
-            self._append_action(self.generic_ok(image), image_actions)
-            self._append_action(self.sign_metamask(image), image_actions)
-            self._append_action(self.close(image), image_actions)
-            self._append_action(self.back(image), image_actions)
-            self._append_action(self.all_heroes_to_work(image), image_actions)
-            self._append_action(self.work(image), image_actions)
-            self._append_action(self.rest(image), image_actions)
-            self._append_action(self.treasure_hunt(image), image_actions)
-            self._append_action(self.go_to_heroes(image), image_actions)
-            self._append_action(self.slide_down_to_return_to_work(image), image_actions)
-            self._append_action(self.slide_up_to_go_heroes(image), image_actions)
-            self._append_action(self.rest_all_heroes(image), image_actions)
+            self._append_action(self.connect_wallet(image), image_behaviours)
+            self._append_action(self.error(image), image_behaviours)
+            self._append_action(self.generic_ok(image), image_behaviours)
+            self._append_action(self.sign_metamask(image), image_behaviours)
+            self._append_action(self.close(image), image_behaviours)
+            self._append_action(self.back(image), image_behaviours)
+            self._append_action(self.all_heroes_to_work(image), image_behaviours)
+            self._append_action(self.work(image), image_behaviours)
+            self._append_action(self.rest(image), image_behaviours)
+            self._append_action(self.treasure_hunt(image), image_behaviours)
+            self._append_action(self.go_to_heroes(image), image_behaviours)
+            self._append_action(self.slide_down_to_return_to_work(image), image_behaviours)
+            self._append_action(self.slide_up_to_go_heroes(image), image_behaviours)
+            self._append_action(self.rest_all_heroes(image), image_behaviours)
+            self._append_action(self.red_bar(image), image_behaviours)
+            self._append_action(self.green_bar(image), image_behaviours)
+            self._append_action(self.full_bar(image), image_behaviours)
+            self._append_action(self.hero_localization_bar(image), image_behaviours)
 
-            self._debug_image(image, image_actions)
+            self._debug_image(image, image_behaviours)
 
-            actions.append(image_actions)
+            behaviours.append(image_behaviours)
 
-        return actions
+        return behaviours
 
     def connect_wallet(self, image) -> Optional[ConnectWallet]:
         images = ['connect-wallet-button-0', 'connect-wallet-button-1', 'connect-wallet-button-2',
@@ -69,7 +74,7 @@ class BombCryptoImageProcessor:
             generic_ok = self.generic_ok(image)
 
             if generic_ok:
-                return OkError(generic_ok.rectangle())
+                return OkError(generic_ok.rectangles())
 
         return None
 
@@ -124,7 +129,7 @@ class BombCryptoImageProcessor:
         return None
 
     def work(self, image) -> Optional[SendHeroToWork]:
-        images = ['work-button-0', 'work-button-1']
+        images = ['work-button-0', 'work-button-1', 'work-button-2']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
@@ -193,6 +198,46 @@ class BombCryptoImageProcessor:
 
         return None
 
+    def red_bar(self, image) -> Optional[RedBar]:
+        images = ['red-bar-0', 'red-bar-1', 'red-bar-2']
+        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
+                                                                self._match_image_threshold, False)
+
+        if has_image:
+            return RedBar(rectangle)
+
+        return None
+
+    def green_bar(self, image) -> Optional[GreenBar]:
+        images = ['green-bar-0', 'green-bar-1']
+        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
+                                                                self._match_image_threshold, False)
+
+        if has_image:
+            return GreenBar(rectangle)
+
+        return None
+
+    def hero_localization_bar(self, image) -> Optional[HeroLocalizationBar]:
+        images = ['hero-bar-0', 'hero-bar-0']
+        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
+                                                                self._match_image_threshold, True)
+
+        if has_image:
+            return HeroLocalizationBar(rectangle)
+
+        return None
+
+    def full_bar(self, image) -> Optional[FullBar]:
+        images = ['full-bar-0', 'full-bar-1']
+        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
+                                                                self._match_image_threshold, False)
+
+        if has_image:
+            return FullBar(rectangle)
+
+        return None
+
     def _debug_image(self, image, actions):
         if not self._debug:
             return
@@ -204,6 +249,11 @@ class BombCryptoImageProcessor:
 
                     for point in points:
                         ImageProcessor.draw_circle(image, point)
+
+                continue
+
+            if isinstance(action, Information):
+                ImageProcessor.draw_rectangles(image, action.rectangles())
 
         ImageProcessor.show(image)
 

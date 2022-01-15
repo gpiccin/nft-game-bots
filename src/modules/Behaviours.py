@@ -7,6 +7,14 @@ class Behaviour:
         self._target_rectangle = 1
 
 
+class Information(Behaviour):
+    def __init__(self, rectangles):
+        super().__init__()
+        self._rectangles = rectangles
+
+    def rectangles(self):
+        return self._rectangles
+
 class Unknow(Behaviour):
     def __init__(self):
         super().__init__()
@@ -17,13 +25,9 @@ class Refresh(Behaviour):
         super().__init__()
 
 
-class Click(Behaviour):
+class Click(Information):
     def __init__(self, rectangles):
-        super().__init__()
-        self._rectangles = rectangles
-
-    def rectangle(self):
-        return self._rectangles
+        super().__init__(rectangles)
 
     def points(self) -> []:
         points = []

@@ -1,4 +1,4 @@
-from src.modules.Behaviours import Click
+from src.modules.Behaviours import Click, Behaviour, Information
 
 
 class ConnectWallet(Click):
@@ -67,5 +67,25 @@ class SlideUpToGoHeroes(Click):
 
 
 class SlideDownToGoHeroes(Click):
+    def __init__(self, rectangle):
+        super().__init__(rectangle)
+
+
+class GreenBar(Information):
+    def __init__(self, rectangle):
+        super().__init__(rectangle)
+
+
+class RedBar(Information):
+    def __init__(self, rectangle):
+        super().__init__(rectangle)
+
+
+class FullBar(Information):
+    def __init__(self, rectangle):
+        super().__init__(rectangle)
+
+
+class HeroLocalizationBar(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)

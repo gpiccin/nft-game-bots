@@ -6,27 +6,25 @@ from src.modules.ImageLoader import ImageLoader
 
 
 class ImageProcessor:
-    def match_list(self, source_image,  image_loader: ImageLoader, images, threshold):
+    def match_list(self, source_image,  image_loader: ImageLoader, images, threshold, use_gray_scale=True):
         for image_name in images:
-            rectangles, image_found = self.match(source_image, image_loader.get_image(image_name), threshold)
+            rectangles, image_found = self.match(source_image, image_loader.get_image(image_name),
+                                                 threshold, use_gray_scale)
 
             if image_found:
                 return rectangles, image_found
 
         return [], False
 
-    def match(self, source_image, target_image, threshold):
-        """Search for image in the source image
-          Parameters:
-              source_image: The image that contains the image.
-              target_image: The image that will be used as a template to find where to click.
-              threshold(float): How confident the bot needs to be to click the buttons (values from 0 to 1)
-          """
+    def match(self, source_image, target_image, threshold, use_gray_scale=True):
+        match_result = None
 
-        source_gray_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2GRAY)
-        target_gray_image = cv2.cvtColor(target_image, cv2.COLOR_BGR2GRAY)
-
-        match_result = cv2.matchTemplate(source_gray_image, target_gray_image, cv2.TM_CCOEFF_NORMED)
+        if use_gray_scale:
+            source_gray_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2GRAY)
+            target_gray_image = cv2.cvtColor(target_image, cv2.COLOR_BGR2GRAY)
+            match_result = cv2.matchTemplate(source_gray_image, target_gray_image, cv2.TM_CCOEFF_NORMED)
+        else:
+            match_result = cv2.matchTemplate(source_image, target_image, cv2.TM_CCOEFF_NORMED)
 
         width = target_image.shape[1]
         height = target_image.shape[0]
