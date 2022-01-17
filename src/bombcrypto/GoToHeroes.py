@@ -1,5 +1,3 @@
-import time
-
 from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from src.modules.MethodExecutor import MethodExecutor
 from src.modules.ActionExecutor import ActionExecutor
@@ -13,13 +11,13 @@ class GoToHeroes:
 
     def run(self, image):
         if not self._time_to_check_heroes.is_expired():
-            return False
+            return
 
         if self._image_processor.is_in_the_heroes_screen(image):
-            return False
+            return
 
         if not self._image_processor.is_in_the_game_play_screen(image):
-            return False
+            return
 
         is_go_heroes_button_visible = self.go_to_heroes_from_game_play(image)
 
@@ -31,9 +29,6 @@ class GoToHeroes:
 
             if executed:
                 self._time_to_check_heroes.start()
-                return True
-
-        return False
 
     def go_to_heroes_list(self, image):
         go_to_heroes = self._image_processor.go_to_heroes(image)

@@ -86,6 +86,6 @@ class FullBarClick(Information):
         super().__init__(rectangle)
 
 
-class HeroLocalizationBarClick(Information):
+class HeroLocalizationBar(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)

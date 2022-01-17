@@ -3,11 +3,11 @@ from modules.ImageProvider import ImageProvider
 
 
 def run():
-    # image_provider = ImageProvider('./bombcrypto/test-images', ['connect-wallet', 'heroes-list-1'])
+    # image_provider = ImageProvider('./bombcrypto/test-images', ['heroes-list'])
     image_provider = ImageProvider()
 
     bot = BombCryptoBot(image_provider)
-    # return debug(bot)
+    #return debug(bot)
     loop(bot)
 
 

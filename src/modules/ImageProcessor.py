@@ -1,3 +1,4 @@
+import hashlib
 import random
 
 import cv2
@@ -49,6 +50,9 @@ class ImageProcessor:
         for (x, y, w, h) in rectangles:
             cv2.rectangle(image, (x, y), (x + w, y + h), ImageProcessor.random_color(), 2)
 
+    def draw_rectangle(image, x, y, w, h):
+        cv2.rectangle(image, (x, y), (x + w, y + h), ImageProcessor.random_color(), 2)
+
     @staticmethod
     def random_color():
         return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
@@ -67,3 +71,10 @@ class ImageProcessor:
     @staticmethod
     def draw_circle(image, center_coordinates):
         cv2.circle(image, center_coordinates, 1, ImageProcessor.random_color(), 2)
+
+    @staticmethod
+    def image_hash(data):
+        return hashlib.md5(data.tobytes()).hexdigest()
+        #hash_id = hashlib.md5()
+        #hash_id.update(data.encode())
+        #return hash_id.hexdigest()

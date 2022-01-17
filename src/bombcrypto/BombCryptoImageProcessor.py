@@ -6,7 +6,7 @@ from src.modules.ImageProvider import ImageProvider
 from src.bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, CloseClick, BackClick, \
     SendAllHeroesToWorkClick, \
     SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, GoToHeroesClick, RestAllHeroesClick, SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, RedBarClick, \
-    FullBarClick, HeroLocalizationBarClick, GreenBarClick
+    FullBarClick, HeroLocalizationBar, GreenBarClick
 from src.modules.Behaviours import Behaviour, Click, Information
 
 
@@ -21,40 +21,6 @@ class BombCryptoImageProcessor:
 
     def image(self):
         return self._image_provider.image()
-
-    def debug(self) -> []:
-        images = self._image_provider.images()
-
-        behaviours = []
-
-        for image in images:
-            image_behaviours = []
-
-            self._append_action(self.connect_wallet(image), image_behaviours)
-            self._append_action(self.error(image), image_behaviours)
-            self._append_action(self.generic_ok(image), image_behaviours)
-            self._append_action(self.sign_metamask(image), image_behaviours)
-            self._append_action(self.close(image), image_behaviours)
-            self._append_action(self.back(image), image_behaviours)
-            self._append_action(self.all_heroes_to_work(image), image_behaviours)
-            self._append_action(self.work(image), image_behaviours)
-            self._append_action(self.rest(image), image_behaviours)
-            self._append_action(self.treasure_hunt(image), image_behaviours)
-            self._append_action(self.go_to_heroes(image), image_behaviours)
-            self._append_action(self.slide_down_to_return_to_work(image), image_behaviours)
-            self._append_action(self.slide_up_to_go_heroes(image), image_behaviours)
-            self._append_action(self.rest_all_heroes(image), image_behaviours)
-            self._append_action(self.red_bar(image), image_behaviours)
-            self._append_action(self.green_bar(image), image_behaviours)
-            self._append_action(self.full_bar(image), image_behaviours)
-            self._append_action(self.hero_localization_bar(image), image_behaviours)
-            self._append_action(self.bombcrypto_logo(image), image_behaviours)
-
-            self._debug_image(image, image_behaviours)
-
-            behaviours.append(image_behaviours)
-
-        return behaviours
 
     def connect_wallet(self, image) -> Optional[ConnectWalletClick]:
         images = ['connect-wallet-button-0', 'connect-wallet-button-1', 'connect-wallet-button-2',
@@ -220,18 +186,18 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def hero_localization_bar(self, image) -> Optional[HeroLocalizationBarClick]:
+    def hero_localization_bar(self, image) -> Optional[HeroLocalizationBar]:
         images = ['hero-bar-0', 'hero-bar-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold, True)
 
         if has_image:
-            return HeroLocalizationBarClick(rectangle)
+            return HeroLocalizationBar(rectangle)
 
         return None
 
     def full_bar(self, image) -> Optional[FullBarClick]:
-        images = ['full-bar-0', 'full-bar-1']
+        images = ['full-label-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold, False)
 
@@ -271,8 +237,42 @@ class BombCryptoImageProcessor:
     def is_connect_wallet_screen(self, image):
         return self.connect_wallet(image) is not None
 
+    def debug(self) -> []:
+        images = self._image_provider.images()
+
+        behaviours = []
+
+        for image in images:
+            image_behaviours = []
+
+            self._append_action(self.connect_wallet(image), image_behaviours)
+            self._append_action(self.error(image), image_behaviours)
+            self._append_action(self.generic_ok(image), image_behaviours)
+            self._append_action(self.sign_metamask(image), image_behaviours)
+            self._append_action(self.close(image), image_behaviours)
+            self._append_action(self.back(image), image_behaviours)
+            self._append_action(self.all_heroes_to_work(image), image_behaviours)
+            self._append_action(self.work(image), image_behaviours)
+            self._append_action(self.rest(image), image_behaviours)
+            self._append_action(self.treasure_hunt(image), image_behaviours)
+            self._append_action(self.go_to_heroes(image), image_behaviours)
+            self._append_action(self.slide_down_to_return_to_work(image), image_behaviours)
+            self._append_action(self.slide_up_to_go_heroes(image), image_behaviours)
+            self._append_action(self.rest_all_heroes(image), image_behaviours)
+            self._append_action(self.red_bar(image), image_behaviours)
+            self._append_action(self.green_bar(image), image_behaviours)
+            self._append_action(self.full_bar(image), image_behaviours)
+            self._append_action(self.hero_localization_bar(image), image_behaviours)
+            self._append_action(self.bombcrypto_logo(image), image_behaviours)
+
+            self.debug_image(image, image_behaviours)
+
+            behaviours.append(image_behaviours)
+
+        return behaviours
+
     @staticmethod
-    def _debug_image(image, actions):
+    def debug_image(image, actions):
         debug_image = image.copy()
 
         for action in actions:

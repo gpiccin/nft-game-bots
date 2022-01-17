@@ -9,7 +9,7 @@ class MethodExecutor:
 
     @staticmethod
     def execute(method, method_arguments, check_method=None, check_arguments=None,
-                max_attempts=2, seconds_waiting=2):
+                max_attempts=2, seconds_waiting=4):
 
         attempts = 0
         timer = TimeControl(seconds_waiting)

@@ -20,8 +20,13 @@ class ActionExecutor:
         pyautogui.hotkey('command', 'shift', 'R')
 
     @staticmethod
-    def click(point):
+    def move_to(point):
         x, y = point
-        log('Click (' + str(x) + ',' + str(y) + ')')
         pyautogui.moveTo(x, y, uniform(0.3, 0.7), pyautogui.easeOutQuad)
+        return point
+
+    @staticmethod
+    def click(point):
+        x, y = ActionExecutor.move_to(point)
+        log('Click (' + str(x) + ',' + str(y) + ')')
         pyautogui.click()
