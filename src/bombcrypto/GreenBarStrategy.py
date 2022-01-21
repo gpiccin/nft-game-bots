@@ -1,6 +1,5 @@
 from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from src.bombcrypto.Hero import Hero, HeroesReader
-from src.logger import log
 from src.modules.ActionExecutor import ActionExecutor
 from src.modules.MethodExecutor import MethodExecutor
 
@@ -14,31 +13,34 @@ class GreenBarStrategy:
         self._last_hero_point = None
         self._first_hero_point = None
         self._heroes_analyzed = 0
-        self.heroes = {}
 
     def run(self, image):
         if not self._image_processor.is_in_the_heroes_screen(image):
-            return
+            return False
 
-        self.heroes = self._heroes_header.load_all_heroes(image)
+        heroes = self._heroes_header.load_all_heroes(image)
+        heroes_ids = list(reversed(sorted(heroes.keys())))
 
-        log(len(self.heroes))
-
-        for hero_id in self.heroes:
-            hero = self.heroes[hero_id]
+        for heroe_id in heroes_ids:
+            hero = heroes[heroe_id]
             if hero.energy_level != Hero.RED_ENERGY:
-                hero.send_to_work()
+                hero.send_to_work(self._image_processor.image())
 
-        execute_result = MethodExecutor.execute(self.close,
-                                                [self._image_processor.image],
-                                                self._image_processor.is_in_the_game_play_screen,
-                                                [self._image_processor.image])
+        execution_result = MethodExecutor.execute(self.close,
+                                                  [self._image_processor.image],
+                                                  self._image_processor.is_in_the_game_play_screen,
+                                                  [self._image_processor.image])
 
-        if execute_result == MethodExecutor.SUCCESS:
-            execute_result = MethodExecutor.execute(self.return_to_work,
-                                                    [self._image_processor.image],
-                                                    self._image_processor.is_playing,
-                                                    [self._image_processor.image])
+        if execution_result == MethodExecutor.SUCCESS:
+            execution_result = MethodExecutor.execute(self.return_to_work,
+                                                      [self._image_processor.image],
+                                                      self._image_processor.is_playing,
+                                                      [self._image_processor.image], seconds_waiting=2)
+
+            if execution_result == MethodExecutor.SUCCESS:
+                return True
+
+        return False
 
     def close(self, image):
         close = self._image_processor.close(image)

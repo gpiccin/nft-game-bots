@@ -21,6 +21,9 @@ class BombCryptoImageProcessor:
         self._target_images = ImageLoader('./bombcrypto/target-images')
         self._target_images.load()
 
+    def generic_image_processor(self):
+        return self._image_processor
+
     def image(self):
         return self._image_provider.image()
 

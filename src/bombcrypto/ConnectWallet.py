@@ -9,28 +9,31 @@ class ConnectWallet:
 
     def run(self, image):
         if not self._image_processor.is_connect_wallet_screen(image):
-            return
+            return False
 
-        execute_result = False
+        execution_result = False
 
         if self._image_processor.is_sign_screen(image):
-            execute_result = MethodExecutor.execute(self.sign,
+            execution_result = MethodExecutor.execute(self.sign,
                                               [image],
                                               self._image_processor.is_signed,
                                               [self._image_processor.image],
                                               seconds_waiting=10)
 
-        if execute_result == MethodExecutor.SUCCESS:
-            return
+        if execution_result == MethodExecutor.SUCCESS:
+            return True
 
-        execute_result = MethodExecutor.execute(self.connect,
+        execution_result = MethodExecutor.execute(self.connect,
                                           [image],
                                           self._image_processor.is_sign_screen,
                                           [self._image_processor.image],
                                           seconds_waiting=10)
 
-        if execute_result == MethodExecutor.FAIL:
+        if execution_result == MethodExecutor.FAIL:
             ActionExecutor.refresh_page()
+            return True
+
+        return False
 
     def sign(self, image):
         sign_on_metamask_click = self._image_processor.sign_metamask(image)

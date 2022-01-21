@@ -18,6 +18,15 @@ class ImageProcessor:
         return [], False
 
     @staticmethod
+    def closest_color(list_of_colors, color):
+        colors = np.array(list_of_colors)
+        color = np.array(color)
+        distances = np.sqrt(np.sum((colors - color) ** 2, axis=1))
+        index_of_smallest = np.where(distances == np.amin(distances))
+        smallest_distance = colors[index_of_smallest]
+        return smallest_distance
+
+    @staticmethod
     def dominant_color(image):
         data = np.reshape(image, (-1, 3))
         print(data.shape)

@@ -1,5 +1,6 @@
 from bombcrypto.BombCryptoBot import BombCryptoBot
 from modules.ImageProvider import ImageProvider
+from src.logger import log
 
 
 def run():
@@ -12,9 +13,8 @@ def run():
 
 
 def loop(bot: BombCryptoBot):
-    while True:
-        bot.run()
-
+        while True:
+            bot.run()
 
 def debug(bot: BombCryptoBot):
     bot._bomb_crypto_image_processor.debug()
