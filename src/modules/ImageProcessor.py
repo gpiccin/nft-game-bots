@@ -7,7 +7,7 @@ from src.modules.ImageLoader import ImageLoader
 
 
 class ImageProcessor:
-    def match_list(self, source_image,  image_loader: ImageLoader, images, threshold, use_gray_scale=True):
+    def match_list(self, source_image, image_loader: ImageLoader, images, threshold, use_gray_scale=True):
         for image_name in images:
             rectangles, image_found = self.match(source_image, image_loader.get_image(image_name),
                                                  threshold, use_gray_scale)
@@ -16,6 +16,19 @@ class ImageProcessor:
                 return rectangles, image_found
 
         return [], False
+
+    @staticmethod
+    def dominant_color(image):
+        data = np.reshape(image, (-1, 3))
+        print(data.shape)
+        data = np.float32(data)
+
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        flags = cv2.KMEANS_RANDOM_CENTERS
+        compactness, labels, centers = cv2.kmeans(data, 1, None, criteria, 10, flags)
+
+        b, g, r = centers[0].astype(np.int32)
+        return r, g, b
 
     def match(self, source_image, target_image, threshold, use_gray_scale=True):
         match_result = None
@@ -75,6 +88,6 @@ class ImageProcessor:
     @staticmethod
     def image_hash(data):
         return hashlib.md5(data.tobytes()).hexdigest()
-        #hash_id = hashlib.md5()
-        #hash_id.update(data.encode())
-        #return hash_id.hexdigest()
+        # hash_id = hashlib.md5()
+        # hash_id.update(data.encode())
+        # return hash_id.hexdigest()

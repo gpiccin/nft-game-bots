@@ -1,10 +1,118 @@
 import re
+import time
 import uuid
+from typing import List
 
+import numpy as np
+import pyautogui
 from pytesseract import pytesseract
 
 from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from src.modules.ActionExecutor import ActionExecutor
+from src.modules.ImageProcessor import ImageProcessor
+
+
+class HeroesReader:
+    def __init__(self, image_processor: BombCryptoImageProcessor):
+        self._last_hero_point = None
+        self._first_hero_point = None
+        self._hero_height = None
+        self._image_processor = image_processor
+        self.heroes = {}
+
+    def scroll_up_heroes_list(self, image=None):
+        if image is None:
+            image = self._image_processor.image()
+
+        self.update_first_hero_point(image)
+
+        x, y = self._first_hero_point
+
+        ActionExecutor.click(self._first_hero_point)
+        ActionExecutor.click(self._first_hero_point)
+
+        pyautogui.dragRel(yOffset=self._hero_height * 15, duration=0.3,
+                          button='left')
+        time.sleep(0.5)
+
+    def scroll_down_heroes_list(self):
+        ActionExecutor.click(self._last_hero_point)
+        ActionExecutor.click(self._last_hero_point)
+        pyautogui.dragRel(0, -self._hero_height * 5.25, duration=1,
+                          button='left')
+        time.sleep(2)
+
+    def load_all_heroes(self, image):
+        self.scroll_up_heroes_list(image)
+        heroes = dict(self.load_heroes(self._image_processor.image()))
+
+        if len(heroes) == 5:
+            self.scroll_down_heroes_list()
+            heroes.update(self.load_heroes(self._image_processor.image()))
+
+        if len(heroes) == 10:
+            self.scroll_down_heroes_list()
+            heroes.update(self.load_heroes(self._image_processor.image()))
+
+        self.heroes = heroes
+        return heroes
+
+    def load_heroes(self, image=None) -> {}:
+        if image is None:
+            image = self._image_processor.image()
+
+        bars = self._image_processor.hero_localization_bar(image)
+        work_buttons = self._image_processor.work(image)
+        rest_buttons = self._image_processor.rest(image)
+
+        # self._image_processor.debug_image(image, [bars, rest_buttons])
+
+        bars_rectangles = bars.rectangles()
+        work_buttons_rectangles = work_buttons.rectangles()
+        rest_buttons_rectangles = rest_buttons.rectangles()
+
+        heroes = {}
+
+        self.update_last_hero_point(bars_rectangles[len(bars_rectangles) -1 ])
+
+        for hero_line_number in range(len(bars_rectangles)):
+            # x, y, w, h = rest_buttons_rectangles[hero_line_number]
+            # debug_image = image.copy()
+            # ImageProcessor.draw_circle(debug_image, (x + 2, y + 2))
+            # ImageProcessor.show(debug_image)
+
+            hero = self.get_hero(image,
+                                 bars_rectangles[hero_line_number],
+                                 rest_buttons_rectangles[hero_line_number],
+                                 work_buttons_rectangles[hero_line_number])
+
+            heroes[hero.id] = hero
+
+        return heroes
+
+    def get_hero(self, image, bar_rectangle, rest_rectangle, work_rectangle):
+        hero = Hero(image, bar_rectangle, rest_rectangle, work_rectangle,
+                    self._image_processor, self)
+
+        return hero
+
+    def update_first_hero_point(self, image):
+        bars = self._image_processor.hero_localization_bar(image)
+
+        first_bar = bars.rectangles()[0]
+
+        self.set_hero_height(first_bar)
+
+        x_bar, y_bar, w_bar, h_bar = first_bar
+        self._first_hero_point = (x_bar, y_bar)
+
+    def update_last_hero_point(self, point):
+        x_bar, y_bar, w_bar, h_bar = point
+        self._last_hero_point = (x_bar, y_bar + h_bar)
+
+    def set_hero_height(self, rectangle):
+        x_bar, y_bar, w_bar, h_bar = rectangle
+        self._hero_height = h_bar
 
 
 class Hero:
@@ -13,18 +121,57 @@ class Hero:
     GREEN_ENERGY = 2
     RED_ENERGY = 1
 
-    def __init__(self, hero_id_image, hero_line_image,
-                 image_processor: BombCryptoImageProcessor, is_resting):
-        self.is_resting = is_resting
+    def __init__(self, image,
+                 bar_rectangle, rest_rectangle,
+                 work_rectangle,
+                 image_processor: BombCryptoImageProcessor,
+                 heroes_reader: HeroesReader):
+
+        self._heroes_header = heroes_reader
+        self._image = image
+        self._bar_rectangle = bar_rectangle
+        self._rest_rectangle = rest_rectangle
+        self._work_rectangle = work_rectangle
         self.id = None
         self.type = type
         self.energy_level = None
         self._image_processor = image_processor
+        self._set_hero_information(bar_rectangle,
+                                   rest_rectangle)
+
+    def _set_hero_information(self,
+                              bar_rectangle, rest_rectangle):
+
+        x_bar, y_bar, w_bar, h_bar = bar_rectangle
+        x_rest, y_rest, w_rest, h_rest = rest_rectangle
+
+        hero_line_image = self._image[y_bar:y_bar + h_bar, x_bar:x_bar + x_rest - x_bar + w_rest]
+        hero_id_image = self._image[y_bar:y_bar + int(h_bar / 2),
+                        x_bar + w_bar + 2:x_bar + w_bar + 2 + int(w_bar * 9.8)]
+
+        #ImageProcessor.show(hero_line_image)
+
         self._set_id(hero_id_image)
         self._set_energy(hero_line_image)
+        self._set_state(self._image[y_rest:y_rest+h_rest, x_rest:x_rest+w_rest])
 
-    def set_type(self, type_image):
-        self.type = None
+    def _set_state(self, image):
+        color_found = self._image_processor._image_processor.dominant_color(image)
+        color = [color_found[0], color_found[1], color_found[2]]
+
+        list_of_colors = [[169,124,79], [221,158,93]]
+        closest_color = Hero.closest(list_of_colors,color)
+
+        self.is_resting = closest_color[0][0] == 221
+
+    @staticmethod
+    def closest(list_of_colors, color):
+        colors = np.array(list_of_colors)
+        color = np.array(color)
+        distances = np.sqrt(np.sum((colors - color) ** 2, axis=1))
+        index_of_smallest = np.where(distances == np.amin(distances))
+        smallest_distance = colors[index_of_smallest]
+        return smallest_distance
 
     def _set_id(self, id_image):
         id_text = pytesseract.image_to_string(id_image)
@@ -37,34 +184,47 @@ class Hero:
 
         self._id_image = id_image
 
+    def get_work_rectangle(self):
+        return self._work_rectangle
+
     def send_to_work(self):
-        ActionExecutor.click(self._work_button_point)
-
-    def _send_to_work(self):
-        ActionExecutor.click(self._work_button_point)
-
-    def rest(self):
-        ActionExecutor.click(self._rest_button_point)
-
-    def _rest(self):
-        ActionExecutor.click(self._rest_button_point)
-
-    def _set_energy(self, hero_line_image):
-        energy_bar = self._image_processor.red_bar(hero_line_image)
-
-        if energy_bar:
-            self.energy_level = Hero.RED_ENERGY
+        if not self.is_resting:
             return
 
+        heroes = self._heroes_header.load_heroes()
+        hero = heroes.get(self.id)
+
+        if hero is not None:
+            ActionExecutor.click_rectangle(hero.get_work_rectangle())
+            time.sleep(0.2)
+        else:
+            self._heroes_header.scroll_up_heroes_list()
+            self.send_to_work()
+
+    def _set_energy(self, hero_line_image):
         energy_bar = self._image_processor.full_bar(hero_line_image)
 
         if energy_bar:
             self.energy_level = Hero.FULL_ENERGY
             return
 
-        energy_bar = self._image_processor.green_bar(hero_line_image)
+        begin_energy_bar = self._image_processor.begin_energy_bar(hero_line_image)
+        end_energy_bar = self._image_processor.end_energy_bar(hero_line_image)
 
-        if energy_bar:
+        #self._set_state(self._image[y_rest:y_rest+h_rest, x_rest:x_rest+w_rest])
+        x_begin_energy_bar, y_begin_energy_bar,w_begin_energy_bar,h_begin_energy_bar = begin_energy_bar.rectangles()[0]
+        x_end_energy_bar, y_end_energy_bar, w_end_energy_bar, h_end_energy_bar = end_energy_bar.rectangles()[0]
+
+        image = hero_line_image[y_begin_energy_bar:y_begin_energy_bar+h_end_energy_bar, x_begin_energy_bar:x_end_energy_bar+w_end_energy_bar]
+        #ImageProcessor.show(image)
+        color_found = self._image_processor._image_processor.dominant_color(image)
+
+        list_of_colors = [[192,151,127], [176, 167, 127]]
+        closest_color = Hero.closest(list_of_colors, color_found)
+        is_green_bar = closest_color[0][1] == 167
+
+        if is_green_bar:
             self.energy_level = Hero.GREEN_ENERGY
+            return
 
-        self.energy_level = Hero.UNKNOWN_ENERGY
+        self.energy_level = Hero.RED_ENERGY

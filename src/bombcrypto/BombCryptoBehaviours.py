@@ -71,17 +71,27 @@ class SlideDownToGoHeroesClick(Click):
         super().__init__(rectangle)
 
 
-class GreenBarClick(Information):
+class GreenBarInformation(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class RedBarClick(Information):
+class RedBarInformation(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
 
-class FullBarClick(Information):
+class BeginEnergyBarInformation(Information):
+    def __init__(self, rectangle):
+        super().__init__(rectangle)
+
+
+class EndEnergyBarInformation(Information):
+    def __init__(self, rectangle):
+        super().__init__(rectangle)
+
+
+class FullBarInformation(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 

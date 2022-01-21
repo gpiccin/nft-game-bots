@@ -26,6 +26,17 @@ class ActionExecutor:
         return point
 
     @staticmethod
+    def click_rectangle(rectangle):
+        x, y, width, height = rectangle
+
+        position_x = x + width * uniform(0.1, 0.9)
+        position_y = y + height * uniform(0.1, 0.9)
+
+        x, y = ActionExecutor.move_to((position_x, position_y))
+        log('Click (' + str(x) + ',' + str(y) + ')')
+        pyautogui.click()
+
+    @staticmethod
     def click(point):
         x, y = ActionExecutor.move_to(point)
         log('Click (' + str(x) + ',' + str(y) + ')')

@@ -3,10 +3,12 @@ from typing import Optional
 from src.modules.ImageProcessor import ImageProcessor
 from src.modules.ImageLoader import ImageLoader
 from src.modules.ImageProvider import ImageProvider
-from src.bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, CloseClick, BackClick, \
+from src.bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, \
+    CloseClick, BackClick, \
     SendAllHeroesToWorkClick, \
-    SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, GoToHeroesClick, RestAllHeroesClick, SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, RedBarClick, \
-    FullBarClick, HeroLocalizationBar, GreenBarClick
+    SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, GoToHeroesClick, RestAllHeroesClick, \
+    SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, RedBarInformation, \
+    FullBarInformation, HeroLocalizationBar, GreenBarInformation, BeginEnergyBarInformation, EndEnergyBarInformation
 from src.modules.Behaviours import Behaviour, Click, Information
 
 
@@ -166,43 +168,54 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def red_bar(self, image) -> Optional[RedBarClick]:
-        images = ['red-bar-0', 'red-bar-1', 'red-bar-2']
+
+    def begin_energy_bar(self, image) -> Optional[BeginEnergyBarInformation]:
+        images = ['begin-bar-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold, False)
+                                                                self._match_image_threshold)
 
         if has_image:
-            return RedBarClick(rectangle)
+            return BeginEnergyBarInformation(rectangle)
 
         return None
 
-    def green_bar(self, image) -> Optional[GreenBarClick]:
+    def end_energy_bar(self, image) -> Optional[EndEnergyBarInformation]:
+        images = ['end-bar-0']
+        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
+                                                                self._match_image_threshold)
+
+        if has_image:
+            return EndEnergyBarInformation(rectangle)
+
+        return None
+
+    def green_bar(self, image) -> Optional[GreenBarInformation]:
         images = ['green-bar-0', 'green-bar-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold, False)
 
         if has_image:
-            return GreenBarClick(rectangle)
+            return GreenBarInformation(rectangle)
 
         return None
 
     def hero_localization_bar(self, image) -> Optional[HeroLocalizationBar]:
         images = ['hero-bar-0', 'hero-bar-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold, True)
+                                                                self._match_image_threshold)
 
         if has_image:
             return HeroLocalizationBar(rectangle)
 
         return None
 
-    def full_bar(self, image) -> Optional[FullBarClick]:
+    def full_bar(self, image) -> Optional[FullBarInformation]:
         images = ['full-label-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold, False)
+                                                                self._match_image_threshold)
 
         if has_image:
-            return FullBarClick(rectangle)
+            return FullBarInformation(rectangle)
 
         return None
 
@@ -224,6 +237,9 @@ class BombCryptoImageProcessor:
 
     def is_sign_screen(self, image):
         return self.sign_metamask(image) is not None
+
+    def is_playing(self, image):
+        return self.slide_up_to_go_heroes(image) is not None
 
     def is_loading_screen(self, image):
         return self.bombcrypto_logo(image) is not None and self.connect_wallet(image) is None
