@@ -56,7 +56,7 @@ class RestAllHeroesClick(Click):
         super().__init__(rectangle)
 
 
-class GoToHeroesClick(Click):
+class SendHeroesToWorkClick(Click):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 
@@ -67,16 +67,6 @@ class SlideUpToGoHeroesClick(Click):
 
 
 class SlideDownToGoHeroesClick(Click):
-    def __init__(self, rectangle):
-        super().__init__(rectangle)
-
-
-class GreenBarInformation(Information):
-    def __init__(self, rectangle):
-        super().__init__(rectangle)
-
-
-class RedBarInformation(Information):
     def __init__(self, rectangle):
         super().__init__(rectangle)
 

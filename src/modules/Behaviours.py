@@ -12,8 +12,12 @@ class Information(Behaviour):
         super().__init__()
         self._rectangles = rectangles
 
+    def first_rectangle(self):
+        return self._rectangles[0]
+
     def rectangles(self):
         return self._rectangles
+
 
 class Unknow(Behaviour):
     def __init__(self):

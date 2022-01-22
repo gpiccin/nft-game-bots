@@ -19,6 +19,12 @@ COLOR = {
 }
 
 
+def log_indicator(color='default'):
+    color_formatted = COLOR.get(color.lower(), COLOR['default'])
+    sys.stdout.write(color_formatted + '.')
+    sys.stdout.flush()
+
+
 def log(message, progress_indicator=False, color='default'):
     global last_log_is_progress
     color_formatted = COLOR.get(color.lower(), COLOR['default'])

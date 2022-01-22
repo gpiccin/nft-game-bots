@@ -22,7 +22,7 @@ class ActionExecutor:
     @staticmethod
     def move_to(point):
         x, y = point
-        pyautogui.moveTo(x, y, uniform(0.3, 0.7), pyautogui.easeOutQuad)
+        pyautogui.moveTo(x, y, duration=uniform(0.2, 0.5), tween=pyautogui.easeOutQuad)
         return point
 
     @staticmethod

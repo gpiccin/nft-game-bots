@@ -21,21 +21,21 @@ class GreenBarStrategy:
         heroes = self._heroes_header.load_all_heroes(image)
         heroes_ids = list(reversed(sorted(heroes.keys())))
 
-        for heroe_id in heroes_ids:
-            hero = heroes[heroe_id]
+        for hero_id in heroes_ids:
+            hero = heroes[hero_id]
             if hero.energy_level != Hero.RED_ENERGY:
                 hero.send_to_work(self._image_processor.image())
 
         execution_result = MethodExecutor.execute(self.close,
                                                   [self._image_processor.image],
                                                   self._image_processor.is_in_the_game_play_screen,
-                                                  [self._image_processor.image])
+                                                  [self._image_processor.image], seconds_waiting=2)
 
         if execution_result == MethodExecutor.SUCCESS:
             execution_result = MethodExecutor.execute(self.return_to_work,
                                                       [self._image_processor.image],
                                                       self._image_processor.is_playing,
-                                                      [self._image_processor.image], seconds_waiting=2)
+                                                      [self._image_processor.image])
 
             if execution_result == MethodExecutor.SUCCESS:
                 return True

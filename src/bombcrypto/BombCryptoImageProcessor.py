@@ -6,10 +6,10 @@ from src.modules.ImageProvider import ImageProvider
 from src.bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, \
     CloseClick, BackClick, \
     SendAllHeroesToWorkClick, \
-    SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, GoToHeroesClick, RestAllHeroesClick, \
-    SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, RedBarInformation, \
-    FullBarInformation, HeroLocalizationBar, GreenBarInformation, BeginEnergyBarInformation, EndEnergyBarInformation
-from src.modules.Behaviours import Behaviour, Click, Information
+    SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, SendHeroesToWorkClick, RestAllHeroesClick, \
+    SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, \
+    FullBarInformation, HeroLocalizationBar, BeginEnergyBarInformation, EndEnergyBarInformation
+from src.modules.Behaviours import Click, Information
 
 
 class BombCryptoImageProcessor:
@@ -131,13 +131,13 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def go_to_heroes(self, image) -> Optional[GoToHeroesClick]:
+    def go_to_heroes(self, image) -> Optional[SendHeroesToWorkClick]:
         images = ['go-to-heroes-0', 'go-to-heroes-1', 'go-to-heroes-2']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
 
         if has_image:
-            return GoToHeroesClick(rectangle)
+            return SendHeroesToWorkClick(rectangle)
 
         return None
 
@@ -161,7 +161,7 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def rest_all_heroes(self, image) -> Optional[RestAllHeroesClick]:
+    def all_heroes_to_rest(self, image) -> Optional[RestAllHeroesClick]:
         images = ['rest-all-heroes-button-0', 'rest-all-heroes-button-1']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
@@ -170,7 +170,6 @@ class BombCryptoImageProcessor:
             return RestAllHeroesClick(rectangle)
 
         return None
-
 
     def begin_energy_bar(self, image) -> Optional[BeginEnergyBarInformation]:
         images = ['begin-bar-0']
@@ -192,17 +191,7 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def green_bar(self, image) -> Optional[GreenBarInformation]:
-        images = ['green-bar-0', 'green-bar-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold, False)
-
-        if has_image:
-            return GreenBarInformation(rectangle)
-
-        return None
-
-    def hero_localization_bar(self, image) -> Optional[HeroLocalizationBar]:
+    def hero_bar(self, image) -> Optional[HeroLocalizationBar]:
         images = ['hero-bar-0', 'hero-bar-0']
         rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
                                                                 self._match_image_threshold)
@@ -233,7 +222,7 @@ class BombCryptoImageProcessor:
         return None
 
     def is_in_the_heroes_screen(self, image):
-        return self.hero_localization_bar(image) is not None
+        return self.hero_bar(image) is not None
 
     def is_in_the_game_play_screen(self, image):
         return self.back(image) is not None
@@ -277,11 +266,9 @@ class BombCryptoImageProcessor:
             self._append_action(self.go_to_heroes(image), image_behaviours)
             self._append_action(self.slide_down_to_return_to_work(image), image_behaviours)
             self._append_action(self.slide_up_to_go_heroes(image), image_behaviours)
-            self._append_action(self.rest_all_heroes(image), image_behaviours)
-            self._append_action(self.red_bar(image), image_behaviours)
-            self._append_action(self.green_bar(image), image_behaviours)
+            self._append_action(self.all_heroes_to_rest(image), image_behaviours)
             self._append_action(self.full_bar(image), image_behaviours)
-            self._append_action(self.hero_localization_bar(image), image_behaviours)
+            self._append_action(self.hero_bar(image), image_behaviours)
             self._append_action(self.bombcrypto_logo(image), image_behaviours)
 
             self.debug_image(image, image_behaviours)

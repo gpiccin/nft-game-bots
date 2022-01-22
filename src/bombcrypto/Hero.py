@@ -90,7 +90,7 @@ class HeroesReader:
         if image is None:
             image = self._image_processor.image()
 
-        bars = self._image_processor.hero_localization_bar(image)
+        bars = self._image_processor.hero_bar(image)
         work_buttons = self._image_processor.work(image)
         rest_buttons = self._image_processor.rest(image)
 
@@ -100,35 +100,35 @@ class HeroesReader:
         work_buttons_rectangles = work_buttons.rectangles()
         rest_buttons_rectangles = rest_buttons.rectangles()
 
+        if len(bars_rectangles) != len(work_buttons_rectangles) or \
+            len(bars_rectangles) != len(rest_buttons_rectangles) or \
+            len(work_buttons_rectangles) != len(rest_buttons_rectangles):
+            return
+
         heroes = {}
 
         self.update_last_hero_point(bars_rectangles[len(bars_rectangles) - 1])
 
         for hero_line_number in range(len(bars_rectangles)):
-            # x, y, w, h = rest_buttons_rectangles[hero_line_number]
-            # debug_image = image.copy()
-            # ImageProcessor.draw_circle(debug_image, (x + 2, y + 2))
-            # ImageProcessor.show(debug_image)
-
-            hero = self.get_hero(image,
-                                 bars_rectangles[hero_line_number],
-                                 rest_buttons_rectangles[hero_line_number],
-                                 work_buttons_rectangles[hero_line_number])
+            hero = self.create_hero(image,
+                                    bars_rectangles[hero_line_number],
+                                    rest_buttons_rectangles[hero_line_number],
+                                    work_buttons_rectangles[hero_line_number])
 
             heroes[hero.id] = hero
 
         return heroes
 
-    def get_hero(self, image, bar_rectangle, rest_rectangle, work_rectangle):
+    def create_hero(self, image, bar_rectangle, rest_rectangle, work_rectangle):
         hero = Hero(image, bar_rectangle, rest_rectangle, work_rectangle,
                     self._image_processor, self)
 
         return hero
 
     def update_first_hero_point(self, image):
-        bars = self._image_processor.hero_localization_bar(image)
+        bars = self._image_processor.hero_bar(image)
 
-        first_bar = bars.rectangles()[0]
+        first_bar = bars.first_rectangle()
 
         self.set_hero_height(first_bar)
 
@@ -168,6 +168,21 @@ class Hero:
         self._set_hero_information(bar_rectangle,
                                    rest_rectangle)
 
+    def get_work_rectangle(self):
+        return self._work_rectangle
+
+    def send_to_work(self, image):
+        if not self.is_resting:
+            return
+
+        hero = self._heroes_header.find_hero(image, self.id)
+
+        if hero is None:
+            return
+
+        ActionExecutor.click_rectangle(hero.get_work_rectangle())
+        time.sleep(0.5)
+
     def _set_hero_information(self,
                               bar_rectangle, rest_rectangle):
 
@@ -206,21 +221,6 @@ class Hero:
 
         self._id_image = id_image
 
-    def get_work_rectangle(self):
-        return self._work_rectangle
-
-    def send_to_work(self, image):
-        if not self.is_resting:
-            return
-
-        hero = self._heroes_header.find_hero(image, self.id)
-
-        if hero is None:
-            return
-
-        ActionExecutor.click_rectangle(hero.get_work_rectangle())
-        time.sleep(0.5)
-
     def _set_energy(self, hero_line_image):
         energy_bar = self._image_processor.full_bar(hero_line_image)
 
@@ -228,21 +228,25 @@ class Hero:
             self.energy_level = Hero.FULL_ENERGY
             return
 
-        energy_bar_image = self.get_energy_bar_image(hero_line_image)
+        energy_bar_image = self._get_energy_bar_image(hero_line_image)
 
-        if Hero.is_green_energy_bar(energy_bar_image):
+        if Hero._is_green_energy_bar(energy_bar_image):
             self.energy_level = Hero.GREEN_ENERGY
             return
 
         self.energy_level = Hero.RED_ENERGY
 
-    def get_energy_bar_image(self, hero_line_image):
+    def _get_energy_bar_image(self, hero_line_image):
         begin_energy_bar = self._image_processor.begin_energy_bar(hero_line_image)
         end_energy_bar = self._image_processor.end_energy_bar(hero_line_image)
 
-        x_begin_energy_bar, y_begin_energy_bar, w_begin_energy_bar, h_begin_energy_bar = begin_energy_bar.rectangles()[
-            0]
-        x_end_energy_bar, y_end_energy_bar, w_end_energy_bar, h_end_energy_bar = end_energy_bar.rectangles()[0]
+        x_begin_energy_bar, y_begin_energy_bar, \
+        w_begin_energy_bar, h_begin_energy_bar = \
+            begin_energy_bar.first_rectangle()
+
+        x_end_energy_bar, y_end_energy_bar, \
+        w_end_energy_bar, h_end_energy_bar = \
+            end_energy_bar.first_rectangle()
 
         image = hero_line_image[y_begin_energy_bar:y_begin_energy_bar + h_end_energy_bar,
                 x_begin_energy_bar:x_end_energy_bar + w_end_energy_bar]
@@ -250,7 +254,7 @@ class Hero:
         return image
 
     @staticmethod
-    def is_green_energy_bar(image):
+    def _is_green_energy_bar(image):
         color_found = ImageProcessor.dominant_color(image)
         list_of_colors = [[192, 151, 127], [176, 167, 127]]
         closest_color = ImageProcessor.closest_color(list_of_colors, color_found)
