@@ -6,6 +6,7 @@ import pyautogui
 from pytesseract import pytesseract
 
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from logger import log
 from modules.ActionExecutor import ActionExecutor
 from modules.ImageProcessor import ImageProcessor
 
@@ -34,7 +35,7 @@ class HeroesReader:
     def scroll_down_heroes_list(self):
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
-        pyautogui.dragRel(0, -self._hero_height * 5.25, duration=1,
+        pyautogui.dragRel(0, -self._hero_height * 6.25, duration=1,
                           button='left')
         time.sleep(2)
 
@@ -57,6 +58,12 @@ class HeroesReader:
                 heroes.update(new_heroes)
 
         self.heroes = heroes
+
+        log('Heroes found: ' + str(len(heroes)))
+
+        for h_id in heroes.keys():
+            log('Hero: ' + h_id)
+
         return heroes
 
     def find_hero(self, image, id):
