@@ -45,11 +45,16 @@ class HeroesReader:
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list()
-            heroes.update(self._load_heroes(self._image_processor.image()))
+            new_heroes = self._load_heroes(self._image_processor.image())
+
+            if new_heroes is not None:
+                heroes.update(new_heroes)
 
         if len(heroes) == 10:
-            self.scroll_down_heroes_list()
-            heroes.update(self._load_heroes(self._image_processor.image()))
+            new_heroes = self._load_heroes(self._image_processor.image())
+
+            if new_heroes is not None:
+                heroes.update(new_heroes)
 
         self.heroes = heroes
         return heroes
@@ -95,6 +100,9 @@ class HeroesReader:
         rest_buttons = self._image_processor.rest(image)
 
         # self._image_processor.debug_image(image, [bars, rest_buttons])
+
+        if bars is None or work_buttons is None or rest_buttons is None:
+            return
 
         bars_rectangles = bars.rectangles()
         work_buttons_rectangles = work_buttons.rectangles()
