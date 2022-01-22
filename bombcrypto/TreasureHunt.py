@@ -1,8 +1,7 @@
 #38.34
-from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from src.modules.ActionExecutor import ActionExecutor
-from src.modules.MethodExecutor import MethodExecutor
-from src.modules.TimeControl import TimeControl
+from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from modules.ActionExecutor import ActionExecutor
+from modules.MethodExecutor import MethodExecutor
 
 
 class TreasureHunt:

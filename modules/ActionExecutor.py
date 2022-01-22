@@ -2,7 +2,7 @@ import platform
 from random import uniform
 import pyautogui
 
-from src.logger import log
+from logger import log
 
 
 class ActionExecutor:

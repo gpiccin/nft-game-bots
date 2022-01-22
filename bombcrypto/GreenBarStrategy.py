@@ -1,7 +1,7 @@
-from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from src.bombcrypto.Hero import Hero, HeroesReader
-from src.modules.ActionExecutor import ActionExecutor
-from src.modules.MethodExecutor import MethodExecutor
+from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from bombcrypto.Hero import Hero, HeroesReader
+from modules.ActionExecutor import ActionExecutor
+from modules.MethodExecutor import MethodExecutor
 
 
 class GreenBarStrategy:

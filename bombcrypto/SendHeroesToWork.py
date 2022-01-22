@@ -1,7 +1,7 @@
-from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from src.modules.MethodExecutor import MethodExecutor
-from src.modules.ActionExecutor import ActionExecutor
-from src.modules.TimeControl import TimeControl
+from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from modules.MethodExecutor import MethodExecutor
+from modules.ActionExecutor import ActionExecutor
+from modules.TimeControl import TimeControl
 
 
 class SendHeroesToWork:

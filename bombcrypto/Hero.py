@@ -5,9 +5,9 @@ import uuid
 import pyautogui
 from pytesseract import pytesseract
 
-from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from src.modules.ActionExecutor import ActionExecutor
-from src.modules.ImageProcessor import ImageProcessor
+from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from modules.ActionExecutor import ActionExecutor
+from modules.ImageProcessor import ImageProcessor
 
 
 class HeroesReader:

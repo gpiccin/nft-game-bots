@@ -1,4 +1,4 @@
-from src.modules.Behaviours import Click, Information
+from modules.Behaviours import Click, Information
 
 
 class ConnectWalletClick(Click):

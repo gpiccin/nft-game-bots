@@ -1,15 +1,15 @@
 from typing import Optional
 
-from src.modules.ImageProcessor import ImageProcessor
-from src.modules.ImageLoader import ImageLoader
-from src.modules.ImageProvider import ImageProvider
-from src.bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, \
+from modules.ImageProcessor import ImageProcessor
+from modules.ImageLoader import ImageLoader
+from modules.ImageProvider import ImageProvider
+from bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, \
     CloseClick, BackClick, \
     SendAllHeroesToWorkClick, \
     SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, SendHeroesToWorkClick, RestAllHeroesClick, \
     SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, \
     FullBarInformation, HeroLocalizationBar, BeginEnergyBarInformation, EndEnergyBarInformation
-from src.modules.Behaviours import Click, Information
+from modules.Behaviours import Click, Information
 
 
 class BombCryptoImageProcessor:
@@ -18,7 +18,7 @@ class BombCryptoImageProcessor:
         self._match_image_threshold = match_image_threshold
         self._image_processor = ImageProcessor()
         self._image_provider = image_provider
-        self._target_images = ImageLoader('./bombcrypto/target-images')
+        self._target_images = ImageLoader('../bombcrypto/target-images/')
         self._target_images.load()
 
     def generic_image_processor(self):

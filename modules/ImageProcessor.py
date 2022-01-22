@@ -3,7 +3,7 @@ import random
 
 import cv2
 import numpy as np
-from src.modules.ImageLoader import ImageLoader
+from modules.ImageLoader import ImageLoader
 
 
 class ImageProcessor:

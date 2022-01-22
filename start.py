@@ -1,6 +1,5 @@
 from bombcrypto.BombCryptoBot import BombCryptoBot
 from modules.ImageProvider import ImageProvider
-from src.logger import log
 
 
 def run():

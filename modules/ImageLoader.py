@@ -13,7 +13,7 @@ class ImageLoader:
         loaded_images = {}
 
         for file in file_names:
-            path = self.folder_path.replace('./', '') + '/' + file
+            path = self.folder_path + '/' + file
             file_name = file[:file.find('.')]
 
             image = cv2.imread(path)

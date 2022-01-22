@@ -1,12 +1,12 @@
-from src.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from src.bombcrypto.ConnectWallet import ConnectWallet
-from src.bombcrypto.GenericOk import GenericOk
-from src.bombcrypto.SendHeroesToWork import SendHeroesToWork
-from src.bombcrypto.GreenBarStrategy import GreenBarStrategy
-from src.bombcrypto.Hero import HeroesReader
-from src.bombcrypto.TreasureHunt import TreasureHunt
-from src.bombcrypto.UnlockHeroes import UnlockHeroes
-from src.modules.ImageProvider import ImageProvider
+from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from bombcrypto.ConnectWallet import ConnectWallet
+from bombcrypto.GenericOk import GenericOk
+from bombcrypto.SendHeroesToWork import SendHeroesToWork
+from bombcrypto.GreenBarStrategy import GreenBarStrategy
+from bombcrypto.Hero import HeroesReader
+from bombcrypto.TreasureHunt import TreasureHunt
+from bombcrypto.UnlockHeroes import UnlockHeroes
+from modules.ImageProvider import ImageProvider
 
 
 class BombCryptoBot:

@@ -1,6 +1,6 @@
 import time
-from src.logger import log
-from src.modules.TimeControl import TimeControl
+from logger import log
+from modules.TimeControl import TimeControl
 
 
 class MethodExecutor:

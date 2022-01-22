@@ -1,8 +1,8 @@
 import mss
 import numpy as np
 
-from src.logger import log_indicator
-from src.modules.ImageLoader import ImageLoader
+from logger import log_indicator
+from modules.ImageLoader import ImageLoader
 
 
 class ImageProvider:

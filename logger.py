@@ -1,7 +1,6 @@
-from src.date import formatted_date
+from date import formatted_date
 
 import sys
-import yaml
 
 last_log_is_progress = False
 

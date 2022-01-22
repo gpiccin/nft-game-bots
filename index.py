@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-    
-from src.logger import log, log_new_map_click
+from logger import log, log_new_map_click
 from cv2 import cv2
 from os import listdir
 from random import randint
