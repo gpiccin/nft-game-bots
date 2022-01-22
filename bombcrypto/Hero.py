@@ -35,7 +35,7 @@ class HeroesReader:
     def scroll_down_heroes_list(self):
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
-        pyautogui.dragRel(0, -self._hero_height * 6.25, duration=1,
+        pyautogui.dragRel(0, -self._hero_height * 6, duration=1,
                           button='left')
         time.sleep(2)
 
@@ -52,6 +52,7 @@ class HeroesReader:
                 heroes.update(new_heroes)
 
         if len(heroes) == 10:
+            self.scroll_down_heroes_list()
             new_heroes = self._load_heroes(self._image_processor.image())
 
             if new_heroes is not None:
