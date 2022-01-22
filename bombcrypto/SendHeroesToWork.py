@@ -6,7 +6,7 @@ from modules.TimeControl import TimeControl
 
 class SendHeroesToWork:
     def __init__(self, bomb_crypto_image_processor: BombCryptoImageProcessor):
-        self._time_to_check_heroes = TimeControl(60 * 10)
+        self._time_to_check_heroes = TimeControl(60 * 20)
         self._image_processor = bomb_crypto_image_processor
 
     def run(self, image):

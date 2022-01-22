@@ -42,7 +42,11 @@ class HeroesReader:
     def load_all_heroes(self, image):
         self.update_first_hero_point(image)
 
-        heroes = dict(self._load_heroes(image))
+        heroes = {}
+        new_heroes = self._load_heroes(self._image_processor.image())
+
+        if new_heroes is not None:
+            heroes.update(new_heroes)
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list()
@@ -74,21 +78,32 @@ class HeroesReader:
             return heroes[id]
 
         self.scroll_up_heroes_list()
-        heroes = dict(self._load_heroes(self._image_processor.image()))
+
+        heroes = {}
+        new_heroes = self._load_heroes(self._image_processor.image())
+
+        if new_heroes is not None:
+            heroes.update(new_heroes)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list()
-            heroes.update(self._load_heroes(self._image_processor.image()))
+            new_heroes = self._load_heroes(self._image_processor.image())
+
+            if new_heroes is not None:
+                heroes.update(new_heroes)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
 
         if len(heroes) == 10:
             self.scroll_down_heroes_list()
-            heroes.update(self._load_heroes(self._image_processor.image()))
+            new_heroes = self._load_heroes(self._image_processor.image())
+
+            if new_heroes is not None:
+                heroes.update(new_heroes)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
