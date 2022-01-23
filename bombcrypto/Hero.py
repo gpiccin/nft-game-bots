@@ -36,7 +36,7 @@ class HeroesReader:
     def scroll_down_heroes_list(self):
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
-        pyautogui.dragRel(0, -self._hero_height * 6, duration=1,
+        pyautogui.dragRel(0, -self._hero_height * 6.25, duration=1,
                           button='left')
         ActionExecutor.click(self._last_hero_point)
         time.sleep(0.3)
