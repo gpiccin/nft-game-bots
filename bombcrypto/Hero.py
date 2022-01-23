@@ -39,7 +39,7 @@ class HeroesReader:
         pyautogui.dragRel(0, -self._hero_height * 6.4, duration=1,
                           button='left')
         ActionExecutor.click(self._last_hero_point)
-        time.sleep(0.5)
+        time.sleep(0.8)
 
     def load_all_heroes(self, image):
         self.update_first_hero_point(image)
@@ -69,7 +69,8 @@ class HeroesReader:
         self._logger.info('Heroes found: ' + str(len(heroes)))
 
         for h_id in heroes.keys():
-            self._logger.info('Hero: ' + h_id)
+            hero = heroes[h_id]
+            self._logger.info('ID:' + h_id + ' | EL:' + str(hero.energy_level))
 
         return heroes
 
