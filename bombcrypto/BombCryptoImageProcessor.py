@@ -39,9 +39,9 @@ class BombCryptoImageProcessor:
 
         image = print_screen_image[tly:bly + blh, tlx:tlx + trx + tlw]
 
-        ImageProcessor.show(image)
+        #ImageProcessor.show(image)
 
-        return image
+        return print_screen_image
 
     def connect_wallet(self, image) -> Optional[ConnectWalletClick]:
         images = ['connect-wallet-button-0', 'connect-wallet-button-1', 'connect-wallet-button-2',
