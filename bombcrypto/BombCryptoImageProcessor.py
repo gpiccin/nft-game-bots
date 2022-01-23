@@ -13,12 +13,14 @@ from modules.Behaviours import Click, Information
 
 
 class BombCryptoImageProcessor:
-    def __init__(self, image_provider: ImageProvider, match_image_threshold=0.8):
+    def __init__(self, image_provider: ImageProvider,
+                 target_images_loader: ImageLoader,
+                 match_image_threshold=0.8):
         self._target_images = None
         self._match_image_threshold = match_image_threshold
         self._image_processor = ImageProcessor()
         self._image_provider = image_provider
-        self._target_images = ImageLoader('../bombcrypto/target-images/')
+        self._target_images = target_images_loader
         self._target_images.load()
 
     def generic_image_processor(self):

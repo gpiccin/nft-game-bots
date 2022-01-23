@@ -1,12 +1,14 @@
+import logging
+
 import mss
 import numpy as np
 
-from logger import log_indicator
 from modules.ImageLoader import ImageLoader
 
 
 class ImageProvider:
     def __init__(self, images_path=None, image_names=None):
+        self._logger = logging.getLogger(type(self).__name__)
         self._image_loader = None
 
         if images_path:
@@ -31,7 +33,7 @@ class ImageProvider:
             else:
                 return self.load_images([self._image_loader.get_file_names()[0]])[0]
 
-        log_indicator()
+        self._logger.debug('Print screen')
         return ImageProvider.print_screen(0)
 
     def load_images(self, image_names):

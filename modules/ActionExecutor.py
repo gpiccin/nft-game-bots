@@ -1,15 +1,14 @@
+import logging
 import platform
 from random import uniform
 import pyautogui
-
-from logger import log
 
 
 class ActionExecutor:
 
     @staticmethod
     def refresh_page():
-        log('Refreshing')
+        logging.getLogger(__name__).debug('Refreshing')
 
         system = platform.system()
 
@@ -33,11 +32,12 @@ class ActionExecutor:
         position_y = y + height * uniform(0.1, 0.9)
 
         x, y = ActionExecutor.move_to((position_x, position_y))
-        log('Click (' + str(x) + ',' + str(y) + ')')
+
+        logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
         pyautogui.click()
 
     @staticmethod
     def click(point):
         x, y = ActionExecutor.move_to(point)
-        log('Click (' + str(x) + ',' + str(y) + ')')
+        logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
         pyautogui.click()

@@ -1,3 +1,4 @@
+import logging
 import re
 import time
 import uuid
@@ -6,13 +7,13 @@ import pyautogui
 from pytesseract import pytesseract
 
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from logger import log
 from modules.ActionExecutor import ActionExecutor
 from modules.ImageProcessor import ImageProcessor
 
 
 class HeroesReader:
     def __init__(self, image_processor: BombCryptoImageProcessor):
+        self._logger = logging.getLogger(type(self).__name__)
         self._last_hero_point = None
         self._first_hero_point = None
         self._hero_height = None
@@ -35,9 +36,10 @@ class HeroesReader:
     def scroll_down_heroes_list(self):
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
-        pyautogui.dragRel(0, -self._hero_height * 6, duration=1,
+        pyautogui.dragRel(0, -self._hero_height * 5.80, duration=1,
                           button='left')
-        time.sleep(2)
+        ActionExecutor.click(self._last_hero_point)
+        time.sleep(0.3)
 
     def load_all_heroes(self, image):
         self.update_first_hero_point(image)
@@ -64,10 +66,10 @@ class HeroesReader:
 
         self.heroes = heroes
 
-        log('Heroes found: ' + str(len(heroes)))
+        self._logger.info('Heroes found: ' + str(len(heroes)))
 
         for h_id in heroes.keys():
-            log('Hero: ' + h_id)
+            self._logger.info('Hero: ' + h_id)
 
         return heroes
 
@@ -112,6 +114,9 @@ class HeroesReader:
 
     @staticmethod
     def contains_hero(heroes, id):
+        if heroes is None:
+            return False
+
         return heroes.get(id) is not None
 
     def _load_heroes(self, image=None) -> {}:

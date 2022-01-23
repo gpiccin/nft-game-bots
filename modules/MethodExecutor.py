@@ -1,5 +1,6 @@
+import logging
 import time
-from logger import log
+
 from modules.TimeControl import TimeControl
 
 
@@ -14,8 +15,10 @@ class MethodExecutor:
         attempts = 0
         timer = TimeControl(seconds_waiting)
 
+        logger = logging.getLogger(__name__)
+
         for n in range(max_attempts):
-            log('Execute method ' + str(method) + ' attempt ' + str(n))
+            logger.debug('Execute method ' + str(method) + ' attempt ' + str(n))
             MethodExecutor._execute_method(method, method_arguments)
 
             if check_method:
@@ -25,7 +28,7 @@ class MethodExecutor:
 
                 timer.start()
                 while not timer.is_expired():
-                    log('Execute check method ' + str(check_method))
+                    logger.debug('Execute check method ' + str(check_method))
                     confirmed = MethodExecutor._execute_method(check_method, check_arguments)
 
                     if confirmed:
