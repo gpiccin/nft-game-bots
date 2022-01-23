@@ -18,22 +18,36 @@ class BombCryptoImageProcessor:
                  match_image_threshold=0.8):
         self._target_images = None
         self._match_image_threshold = match_image_threshold
-        self._image_processor = ImageProcessor()
         self._image_provider = image_provider
         self._target_images = target_images_loader
         self._target_images.load()
 
-    def generic_image_processor(self):
-        return self._image_processor
-
     def image(self):
-        return self._image_provider.image()
+        print_screen_image = self._image_provider.image()
+
+        top_left = self.top_left_corner(print_screen_image)
+
+        if top_left is None:
+            return None
+
+        top_right = self.top_right_corner(print_screen_image)
+        bottom_left = self.bottom_left_corner(print_screen_image)
+
+        trx, tr_y, trw, trh = top_right.first_rectangle()
+        tlx, tly, tlw, tlh = top_left.first_rectangle()
+        blx, bly, blw, blh = bottom_left.first_rectangle()
+
+        image = print_screen_image[tly:bly + blh, tlx:tlx + trx + tlw]
+
+        ImageProcessor.show(image)
+
+        return image
 
     def connect_wallet(self, image) -> Optional[ConnectWalletClick]:
         images = ['connect-wallet-button-0', 'connect-wallet-button-1', 'connect-wallet-button-2',
                   'connect-wallet-button-3']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return ConnectWalletClick(rectangle)
@@ -42,8 +56,8 @@ class BombCryptoImageProcessor:
 
     def error(self, image) -> Optional[OkErrorClick]:
         images = ['error-0', 'error-1001-0', 'error-server-unstable-0']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             generic_ok = self.generic_ok(image)
@@ -53,10 +67,40 @@ class BombCryptoImageProcessor:
 
         return None
 
+    def top_left_corner(self, image) -> Optional[Information]:
+        images = ['top-left-corner-0', 'top-left-corner-1']
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
+
+        if has_image:
+            return Information(rectangle)
+
+        return None
+
+    def top_right_corner(self, image) -> Optional[Information]:
+        images = ['top-right-corner-0']
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
+
+        if has_image:
+            return Information(rectangle)
+
+        return None
+
+    def bottom_left_corner(self, image) -> Optional[Information]:
+        images = ['bottom-left-corner-0', 'bottom-left-corner-1']
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
+
+        if has_image:
+            return Information(rectangle)
+
+        return None
+
     def generic_ok(self, image) -> Optional[OkClick]:
         images = ['ok-0', 'ok-1', 'ok-2']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return OkClick(rectangle)
@@ -65,8 +109,8 @@ class BombCryptoImageProcessor:
 
     def sign_metamask(self, image) -> Optional[SignOnMetamaskClick]:
         images = ['sign-metamask-0', 'sign-metamask-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return SignOnMetamaskClick(rectangle)
@@ -75,8 +119,8 @@ class BombCryptoImageProcessor:
 
     def close(self, image) -> Optional[CloseClick]:
         images = ['close-button-0', 'close-button-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return CloseClick(rectangle)
@@ -85,8 +129,8 @@ class BombCryptoImageProcessor:
 
     def back(self, image) -> Optional[BackClick]:
         images = ['back-button-0', 'back-button-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return BackClick(rectangle)
@@ -95,8 +139,8 @@ class BombCryptoImageProcessor:
 
     def all_heroes_to_work(self, image) -> Optional[SendAllHeroesToWorkClick]:
         images = ['send-all-heroes-to-work-button-0', 'send-all-heroes-to-work-button-0']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return SendAllHeroesToWorkClick(rectangle)
@@ -105,8 +149,8 @@ class BombCryptoImageProcessor:
 
     def work(self, image) -> Optional[SendHeroToWorkClick]:
         images = ['work-button-0', 'work-button-1', 'work-button-2']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return SendHeroToWorkClick(rectangle)
@@ -115,8 +159,8 @@ class BombCryptoImageProcessor:
 
     def rest(self, image) -> Optional[RestHeroClick]:
         images = ['rest-button-0', 'rest-button-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return RestHeroClick(rectangle)
@@ -125,8 +169,8 @@ class BombCryptoImageProcessor:
 
     def treasure_hunt(self, image) -> Optional[TreasureHuntClick]:
         images = ['treasure-hunt-0', 'treasure-hunt-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return TreasureHuntClick(rectangle)
@@ -135,8 +179,8 @@ class BombCryptoImageProcessor:
 
     def go_to_heroes(self, image) -> Optional[SendHeroesToWorkClick]:
         images = ['go-to-heroes-0', 'go-to-heroes-1', 'go-to-heroes-2']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return SendHeroesToWorkClick(rectangle)
@@ -145,8 +189,8 @@ class BombCryptoImageProcessor:
 
     def slide_up_to_go_heroes(self, image) -> Optional[SlideUpToGoHeroesClick]:
         images = ['slide-up-go-heroes-0', 'slide-up-go-heroes-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return SlideUpToGoHeroesClick(rectangle)
@@ -155,8 +199,8 @@ class BombCryptoImageProcessor:
 
     def slide_down_to_return_to_work(self, image) -> Optional[SlideDownToGoHeroesClick]:
         images = ['slide-down-go-heroes-0', 'slide-down-go-heroes-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return SlideDownToGoHeroesClick(rectangle)
@@ -165,8 +209,8 @@ class BombCryptoImageProcessor:
 
     def all_heroes_to_rest(self, image) -> Optional[RestAllHeroesClick]:
         images = ['rest-all-heroes-button-0', 'rest-all-heroes-button-1']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return RestAllHeroesClick(rectangle)
@@ -175,8 +219,8 @@ class BombCryptoImageProcessor:
 
     def begin_energy_bar(self, image) -> Optional[BeginEnergyBarInformation]:
         images = ['begin-bar-0']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return BeginEnergyBarInformation(rectangle)
@@ -185,8 +229,8 @@ class BombCryptoImageProcessor:
 
     def end_energy_bar(self, image) -> Optional[EndEnergyBarInformation]:
         images = ['end-bar-0']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return EndEnergyBarInformation(rectangle)
@@ -195,8 +239,8 @@ class BombCryptoImageProcessor:
 
     def hero_bar(self, image) -> Optional[HeroLocalizationBar]:
         images = ['hero-bar-0', 'hero-bar-0']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return HeroLocalizationBar(rectangle)
@@ -205,8 +249,8 @@ class BombCryptoImageProcessor:
 
     def full_bar(self, image) -> Optional[FullBarInformation]:
         images = ['full-label-0']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
 
         if has_image:
             return FullBarInformation(rectangle)
@@ -215,8 +259,8 @@ class BombCryptoImageProcessor:
 
     def bombcrypto_logo(self, image) -> Optional[Information]:
         images = ['bomb-logo-0', 'bomb-logo-0']
-        rectangle, has_image = self._image_processor.match_list(image, self._target_images, images,
-                                                                self._match_image_threshold, False)
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold, False)
 
         if has_image:
             return Information(rectangle)

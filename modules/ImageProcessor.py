@@ -1,16 +1,17 @@
-import hashlib
 import random
 
 import cv2
 import numpy as np
+
 from modules.ImageLoader import ImageLoader
 
 
 class ImageProcessor:
-    def match_list(self, source_image, image_loader: ImageLoader, images, threshold, use_gray_scale=True):
+    @staticmethod
+    def match_list(source_image, image_loader: ImageLoader, images, threshold, use_gray_scale=True):
         for image_name in images:
-            rectangles, image_found = self.match(source_image, image_loader.get_image(image_name),
-                                                 threshold, use_gray_scale)
+            rectangles, image_found = ImageProcessor.match(source_image, image_loader.get_image(image_name),
+                                                           threshold, use_gray_scale)
 
             if image_found:
                 return rectangles, image_found
@@ -39,7 +40,8 @@ class ImageProcessor:
         b, g, r = centers[0].astype(np.int32)
         return r, g, b
 
-    def match(self, source_image, target_image, threshold, use_gray_scale=True):
+    @staticmethod
+    def match(source_image, target_image, threshold, use_gray_scale=True):
         match_result = None
 
         if use_gray_scale:
@@ -49,10 +51,10 @@ class ImageProcessor:
         else:
             match_result = cv2.matchTemplate(source_image, target_image, cv2.TM_CCOEFF_NORMED)
 
+        yloc, xloc = np.where(match_result >= threshold)
+
         width = target_image.shape[1]
         height = target_image.shape[0]
-
-        yloc, xloc = np.where(match_result >= threshold)
 
         rectangles = []
         for (x, y) in zip(xloc, yloc):
@@ -61,7 +63,7 @@ class ImageProcessor:
 
         rectangles, weights = cv2.groupRectangles(rectangles, 1, 0.2)
 
-        return rectangles, self._has_target_image(rectangles)
+        return rectangles, ImageProcessor._has_target_image(rectangles)
 
     @staticmethod
     def _has_target_image(rectangles):
@@ -72,6 +74,7 @@ class ImageProcessor:
         for (x, y, w, h) in rectangles:
             cv2.rectangle(image, (x, y), (x + w, y + h), ImageProcessor.random_color(), 2)
 
+    @staticmethod
     def draw_rectangle(image, x, y, w, h):
         cv2.rectangle(image, (x, y), (x + w, y + h), ImageProcessor.random_color(), 2)
 
@@ -93,10 +96,3 @@ class ImageProcessor:
     @staticmethod
     def draw_circle(image, center_coordinates):
         cv2.circle(image, center_coordinates, 1, ImageProcessor.random_color(), 2)
-
-    @staticmethod
-    def image_hash(data):
-        return hashlib.md5(data.tobytes()).hexdigest()
-        # hash_id = hashlib.md5()
-        # hash_id.update(data.encode())
-        # return hash_id.hexdigest()

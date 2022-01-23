@@ -14,7 +14,6 @@ class BombCryptoBot:
     def __init__(self, image_provider: ImageProvider, target_images_loader: ImageLoader):
         self._image_provider = image_provider
         self._bomb_crypto_image_processor = BombCryptoImageProcessor(self._image_provider, target_images_loader)
-
         self._connect_wallet = ConnectWallet(self._bomb_crypto_image_processor)
         self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor)
         self._go_to_heroes = SendHeroesToWork(self._bomb_crypto_image_processor)
@@ -25,6 +24,9 @@ class BombCryptoBot:
 
     def run(self):
         image = self._bomb_crypto_image_processor.image()
+
+        if image is None:
+            return
 
         if self._connect_wallet.run(image):
             return

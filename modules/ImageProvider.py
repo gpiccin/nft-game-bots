@@ -24,6 +24,7 @@ class ImageProvider:
             else:
                 return self.load_images(self._image_loader.get_file_names())
 
+        self._logger.debug('Print screen')
         return [ImageProvider.print_screen(0)]
 
     def image(self):

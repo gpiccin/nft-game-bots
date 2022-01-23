@@ -1,4 +1,3 @@
-#38.34
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from modules.ActionExecutor import ActionExecutor
 from modules.MethodExecutor import MethodExecutor
@@ -18,9 +17,9 @@ class UnlockHeroes:
 
         if back:
             execution_result = MethodExecutor.execute(self.go_to_back,
-                                   [image],
-                                   self._image_processor.is_treasure_hunt_screen,
-                                   [self._image_processor.image])
+                                                      [image],
+                                                      self._image_processor.is_treasure_hunt_screen,
+                                                      [self._image_processor.image])
 
             if execution_result == MethodExecutor.SUCCESS:
                 self._time_to_check_heroes.start()
