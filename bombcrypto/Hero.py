@@ -39,7 +39,7 @@ class HeroesReader:
         pyautogui.dragRel(0, -self._hero_height * 6.4, duration=1,
                           button='left')
         ActionExecutor.click(self._last_hero_point)
-        time.sleep(0.3)
+        time.sleep(0.5)
 
     def load_all_heroes(self, image):
         self.update_first_hero_point(image)

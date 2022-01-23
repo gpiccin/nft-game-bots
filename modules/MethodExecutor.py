@@ -28,13 +28,13 @@ class MethodExecutor:
 
                 timer.start()
                 while not timer.is_expired():
+                    time.sleep(seconds_waiting / 4)
+
                     logger.debug('Execute check method ' + str(check_method))
                     confirmed = MethodExecutor._execute_method(check_method, check_arguments)
 
                     if confirmed:
                         break
-                    else:
-                        time.sleep(seconds_waiting / 4)
 
                 if confirmed:
                     return MethodExecutor.SUCCESS
