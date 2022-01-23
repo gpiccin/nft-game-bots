@@ -29,15 +29,18 @@ class HeroesReader:
         ActionExecutor.click(self._first_hero_point)
         ActionExecutor.click(self._first_hero_point)
 
-        pyautogui.dragRel(yOffset=self._hero_height * 15, duration=0.3,
-                          button='left')
+        pyautogui.drag(0, self._hero_height * 15, duration=0.3,
+                       button='left')
+
         time.sleep(0.5)
 
     def scroll_down_heroes_list(self):
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
-        pyautogui.dragRel(0, -self._hero_height * 6.4, duration=1,
-                          button='left')
+
+        pyautogui.drag(0, -self._hero_height * 6.5, duration=1,
+                       button='left')
+
         ActionExecutor.click(self._last_hero_point)
         time.sleep(0.8)
 
@@ -138,8 +141,8 @@ class HeroesReader:
         rest_buttons_rectangles = rest_buttons.rectangles()
 
         if len(bars_rectangles) != len(work_buttons_rectangles) or \
-            len(bars_rectangles) != len(rest_buttons_rectangles) or \
-            len(work_buttons_rectangles) != len(rest_buttons_rectangles):
+                len(bars_rectangles) != len(rest_buttons_rectangles) or \
+                len(work_buttons_rectangles) != len(rest_buttons_rectangles):
             return
 
         heroes = {}
