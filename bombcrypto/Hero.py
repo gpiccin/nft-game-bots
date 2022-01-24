@@ -18,6 +18,7 @@ class HeroesReader:
         self._first_hero_point = None
         self._hero_height = None
         self._image_processor = image_processor
+        self._second_scroll_adjust_factor = 6.65
 
     def scroll_up_heroes_list(self, image=None):
         if image is None:
@@ -33,11 +34,11 @@ class HeroesReader:
 
         time.sleep(0.5)
 
-    def scroll_down_heroes_list(self):
+    def scroll_down_heroes_list(self, adjust_factor=6.56):
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
 
-        pyautogui.drag(0, -self._hero_height * 6.56, duration=1,
+        pyautogui.drag(0, -self._hero_height * adjust_factor, duration=1,
                        button='left')
 
         ActionExecutor.click(self._last_hero_point)
@@ -54,7 +55,7 @@ class HeroesReader:
             self._load_heroes(heroes)
 
         if len(heroes) == 10:
-            self.scroll_down_heroes_list()
+            self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
             self._load_heroes(heroes)
 
         self._logger.info('Heroes found: ' + str(len(heroes)))
@@ -93,7 +94,7 @@ class HeroesReader:
             return heroes[id]
 
         if len(heroes) == 10:
-            self.scroll_down_heroes_list()
+            self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
             self._load_heroes(heroes)
 
         if self.contains_hero(heroes, id):
