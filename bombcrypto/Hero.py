@@ -170,6 +170,7 @@ class Hero:
                  image_processor: BombCryptoImageProcessor,
                  heroes_reader: HeroesReader):
 
+        self.is_resting = None
         self._logger = logging.getLogger(type(self).__name__)
         self._heroes_header = heroes_reader
         self._image = image
@@ -199,6 +200,7 @@ class Hero:
             return
 
         ActionExecutor.click_rectangle(hero.get_work_rectangle())
+        self.is_resting = False
         time.sleep(1)
 
     def _set_hero_information(self,
