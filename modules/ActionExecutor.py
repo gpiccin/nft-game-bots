@@ -40,8 +40,8 @@ class ActionExecutor:
     def click(point):
         x, y = point
 
-        x = numpy.trunc(x)
-        y = numpy.trunc(y)
+        x = int(numpy.trunc(x))
+        y = int(numpy.trunc(y))
 
         ActionExecutor._move_to(x, y)
         logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
