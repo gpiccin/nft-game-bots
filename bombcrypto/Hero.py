@@ -199,7 +199,7 @@ class Hero:
             return
 
         ActionExecutor.click_rectangle(hero.get_work_rectangle())
-        time.sleep(0.5)
+        time.sleep(1)
 
     def _set_hero_information(self,
                               bar_rectangle, rest_rectangle):
