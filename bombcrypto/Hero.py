@@ -18,7 +18,7 @@ class HeroesReader:
         self._first_hero_point = None
         self._hero_height = None
         self._image_processor = image_processor
-        self._second_scroll_adjust_factor = 6.67
+        self._second_scroll_adjust_factor = 6.65
 
     def scroll_up_heroes_list(self, image=None):
         if image is None:
@@ -32,7 +32,7 @@ class HeroesReader:
 
         time.sleep(0.5)
 
-    def scroll_down_heroes_list(self, adjust_factor=6.56):
+    def scroll_down_heroes_list(self, adjust_factor=6.55):
         ActionExecutor.click(self._last_hero_point)
 
         pyautogui.drag(0, -self._hero_height * adjust_factor, duration=1,
@@ -63,40 +63,31 @@ class HeroesReader:
 
         return heroes
 
-    def _load_heroes_from_screen(self, heroes, image=None):
-        if image is None:
-            image = self._image_processor.image()
-
-        new_heroes = self._read_heroes_from_screen(image)
+    def _load_heroes_from_screen(self, heroes):
+        new_heroes = self._read_heroes_from_screen()
 
         if new_heroes is not None:
             heroes.update(new_heroes)
 
-    def find_hero(self, image, id):
-        heroes = self._read_heroes_from_screen(image)
-
+    def find_hero(self, id):
+        heroes = self._read_heroes_from_screen()
         if self.contains_hero(heroes, id):
             return heroes[id]
 
         self.scroll_up_heroes_list()
         heroes = self._read_heroes_from_screen()
-
         if self.contains_hero(heroes, id):
             return heroes[id]
 
-        if len(heroes) == 5:
-            self.scroll_down_heroes_list()
-            heroes = self._read_heroes_from_screen()
+        self.scroll_down_heroes_list()
+        heroes = self._read_heroes_from_screen()
+        if self.contains_hero(heroes, id):
+            return heroes[id]
 
-            if self.contains_hero(heroes, id):
-                return heroes[id]
-
-        if len(heroes) == 10:
-            self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
-            heroes = self._read_heroes_from_screen()
-
-            if self.contains_hero(heroes, id):
-                return heroes[id]
+        self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
+        heroes = self._read_heroes_from_screen()
+        if self.contains_hero(heroes, id):
+            return heroes[id]
 
         return None
 
@@ -107,9 +98,8 @@ class HeroesReader:
 
         return heroes.get(id) is not None
 
-    def _read_heroes_from_screen(self, image=None) -> {}:
-        if image is None:
-            image = self._image_processor.image()
+    def _read_heroes_from_screen(self) -> {}:
+        image = self._image_processor.image()
 
         bars = self._image_processor.hero_bar(image)
         work_buttons = self._image_processor.work(image)
@@ -180,6 +170,7 @@ class Hero:
                  image_processor: BombCryptoImageProcessor,
                  heroes_reader: HeroesReader):
 
+        self._logger = logging.getLogger(type(self).__name__)
         self._heroes_header = heroes_reader
         self._image = image
         self._bar_rectangle = bar_rectangle
@@ -195,13 +186,16 @@ class Hero:
     def get_work_rectangle(self):
         return self._work_rectangle
 
-    def send_to_work(self, image):
+    def send_to_work(self):
         if not self.is_resting:
             return
 
-        hero = self._heroes_header.find_hero(image, self.id)
+        self._logger.info('Send hero ID:' + self.id + ' | EL:' + str(self.energy_level) + ' to work')
+
+        hero = self._heroes_header.find_hero(self.id)
 
         if hero is None:
+            self._logger.info('Hero ID:' + self.id + ' | EL:' + str(self.energy_level) + ' not found')
             return
 
         ActionExecutor.click_rectangle(hero.get_work_rectangle())

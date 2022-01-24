@@ -24,7 +24,7 @@ class GreenBarStrategy:
         for hero_id in heroes_ids:
             hero = heroes[hero_id]
             if hero.energy_level != Hero.RED_ENERGY:
-                hero.send_to_work(self._image_processor.image())
+                hero.send_to_work()
 
         execution_result = MethodExecutor.execute(self.close,
                                                   [self._image_processor.image],
