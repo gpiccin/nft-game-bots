@@ -37,7 +37,7 @@ class HeroesReader:
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
 
-        pyautogui.drag(0, -self._hero_height * 6.6, duration=1,
+        pyautogui.drag(0, -self._hero_height * 6.55, duration=1.2,
                        button='left')
 
         ActionExecutor.click(self._last_hero_point)
