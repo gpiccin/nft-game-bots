@@ -26,11 +26,6 @@ class GreenBarStrategy:
             if hero.energy_level != Hero.RED_ENERGY:
                 hero.send_to_work()
 
-        for hero_id in heroes_ids:
-            hero = heroes[hero_id]
-            if hero.is_resting and hero.energy_level != Hero.RED_ENERGY:
-                hero.send_to_work()
-
         execution_result = MethodExecutor.execute(self.close,
                                                   [self._image_processor.image],
                                                   self._image_processor.is_in_the_game_play_screen,

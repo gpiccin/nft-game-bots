@@ -18,7 +18,10 @@ class HeroesReader:
         self._first_hero_point = None
         self._hero_height = None
         self._image_processor = image_processor
+        self._first_scroll_adjust_factor = 6.55
         self._second_scroll_adjust_factor = 6.65
+        self._seconds_to_wait_after_scroll_down = 1.2
+        self._seconds_to_wait_after_scroll_up = 1
 
     def scroll_up_heroes_list(self, image=None):
         if image is None:
@@ -27,19 +30,16 @@ class HeroesReader:
         self.update_first_hero_point(image)
         ActionExecutor.click(self._first_hero_point)
 
-        pyautogui.drag(0, self._hero_height * 15, duration=0.3,
-                       button='left')
+        pyautogui.drag(0, self._hero_height * 15, duration=0.3, button='left')
+        time.sleep(self._seconds_to_wait_after_scroll_up)
 
-        time.sleep(0.5)
-
-    def scroll_down_heroes_list(self, adjust_factor=6.55):
+    def scroll_down_heroes_list(self, adjust_factor):
         ActionExecutor.click(self._last_hero_point)
 
-        pyautogui.drag(0, -self._hero_height * adjust_factor, duration=1,
-                       button='left')
+        pyautogui.drag(0, -self._hero_height * adjust_factor, duration=1, button='left')
 
         ActionExecutor.click(self._last_hero_point)
-        time.sleep(1)
+        time.sleep(self._seconds_to_wait_after_scroll_down)
 
     def load_all_heroes(self, image):
         self.update_first_hero_point(image)
@@ -48,14 +48,14 @@ class HeroesReader:
         self._load_heroes_from_screen(heroes)
 
         if len(heroes) == 5:
-            self.scroll_down_heroes_list()
+            self.scroll_down_heroes_list(self._first_scroll_adjust_factor)
             self._load_heroes_from_screen(heroes)
 
         if len(heroes) == 10:
             self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
             self._load_heroes_from_screen(heroes)
 
-        self._logger.info('Heroes found: ' + str(len(heroes)))
+        self._logger.info(str(len(heroes)) + ' heroes found')
 
         for h_id in heroes.keys():
             hero = heroes[h_id]
@@ -79,7 +79,7 @@ class HeroesReader:
         if self.contains_hero(heroes, id):
             return heroes[id]
 
-        self.scroll_down_heroes_list()
+        self.scroll_down_heroes_list(self._first_scroll_adjust_factor)
         heroes = self._read_heroes_from_screen()
         if self.contains_hero(heroes, id):
             return heroes[id]
@@ -170,17 +170,22 @@ class Hero:
                  image_processor: BombCryptoImageProcessor,
                  heroes_reader: HeroesReader):
 
-        self.is_resting = None
         self._logger = logging.getLogger(type(self).__name__)
-        self._heroes_header = heroes_reader
         self._image = image
         self._bar_rectangle = bar_rectangle
         self._rest_rectangle = rest_rectangle
         self._work_rectangle = work_rectangle
+        self._image_processor = image_processor
+        self._heroes_header = heroes_reader
+
+        self._send_to_work_attempts = 0
+        self._max_send_to_work_attempts = 2
+        self._seconds_to_wait_after_send_to_work = 1.2
+
         self.id = None
         self.type = type
         self.energy_level = None
-        self._image_processor = image_processor
+        self.is_resting = None
         self._set_hero_information(bar_rectangle,
                                    rest_rectangle)
 
@@ -197,14 +202,18 @@ class Hero:
 
         if hero is None:
             self._logger.info('Hero ID:' + self.id + ' | EL:' + str(self.energy_level) + ' not found')
+
+            if self._send_to_work_attempts < self._max_send_to_work_attempts:
+                self._send_to_work_attempts += 1
+                self.send_to_work()
+
             return
 
+        self._send_to_work_attempts = 0
         ActionExecutor.click_rectangle(hero.get_work_rectangle())
-        self.is_resting = False
-        time.sleep(1)
+        time.sleep(self._seconds_to_wait_after_send_to_work)
 
-    def _set_hero_information(self,
-                              bar_rectangle, rest_rectangle):
+    def _set_hero_information(self, bar_rectangle, rest_rectangle):
 
         x_bar, y_bar, w_bar, h_bar = bar_rectangle
         x_rest, y_rest, w_rest, h_rest = rest_rectangle
@@ -250,7 +259,7 @@ class Hero:
 
         energy_bar_image = self._get_energy_bar_image(hero_line_image)
 
-        if Hero._is_green_energy_bar(energy_bar_image):
+        if BombCryptoImageProcessor.is_hero_energy_bar_green(energy_bar_image):
             self.energy_level = Hero.GREEN_ENERGY
             return
 
@@ -272,10 +281,3 @@ class Hero:
                 x_begin_energy_bar:x_end_energy_bar + w_end_energy_bar]
 
         return image
-
-    @staticmethod
-    def _is_green_energy_bar(image):
-        color_found = ImageProcessor.dominant_color(image)
-        list_of_colors = [[192, 151, 127], [176, 167, 127]]
-        closest_color = ImageProcessor.closest_color(list_of_colors, color_found)
-        return closest_color[0][1] == 167

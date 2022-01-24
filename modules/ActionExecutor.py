@@ -1,10 +1,9 @@
 import logging
-import math
 import platform
+import time
 from random import uniform
 
 import numpy
-import numpy as np
 import pyautogui
 
 
@@ -18,6 +17,7 @@ class ActionExecutor:
 
         if system == "Linux" or system == "Windows":
             pyautogui.hotkey('f5')
+            time.sleep(5)
             return
 
         pyautogui.hotkey('command', 'shift', 'R')

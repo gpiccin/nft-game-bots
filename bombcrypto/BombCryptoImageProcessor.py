@@ -291,6 +291,13 @@ class BombCryptoImageProcessor:
     def is_connect_wallet_screen(self, image):
         return self.connect_wallet(image) is not None
 
+    @staticmethod
+    def is_hero_energy_bar_green(image):
+        color_found = ImageProcessor.dominant_color(image)
+        list_of_colors = [[192, 151, 127], [176, 167, 127]]
+        closest_color = ImageProcessor.closest_color(list_of_colors, color_found)
+        return closest_color[0][1] == 167
+
     def debug(self) -> []:
         images = self._image_provider.images()
 
