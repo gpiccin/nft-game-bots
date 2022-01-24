@@ -32,12 +32,13 @@ class ActionExecutor:
         position_x = x + width * uniform(0.1, 0.9)
         position_y = y + height * uniform(0.1, 0.9)
 
-        ActionExecutor.move_to((position_x, position_y))
         ActionExecutor.click((position_x, position_y))
 
     @staticmethod
     def click(point):
+        ActionExecutor.move_to(point)
+
         x, y = point
-        ActionExecutor.move_to((math.trunc(x), math.trunc(y)))
         logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
+
         pyautogui.click()
