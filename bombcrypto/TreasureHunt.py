@@ -11,16 +11,15 @@ class TreasureHunt:
     def run(self, image):
         treasure_hunt_click = self._image_processor.treasure_hunt(image)
 
-        if treasure_hunt_click:
-            execution_result = MethodExecutor.execute(self.go_to_treasure_hunt,
-                                   [image],
-                                   self._image_processor.is_in_the_game_play_screen,
-                                   [self._image_processor.image])
+        if not treasure_hunt_click:
+            return False
 
-            if execution_result == MethodExecutor.SUCCESS:
-                return True
+        MethodExecutor.execute(self.go_to_treasure_hunt,
+                               [image],
+                               self._image_processor.is_in_the_game_play_screen,
+                               [self._image_processor.image])
 
-        return False
+        return True
 
     def go_to_treasure_hunt(self, image):
         treasure_hunt = self._image_processor.treasure_hunt(image)

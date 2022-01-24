@@ -18,7 +18,7 @@ class HeroesReader:
         self._first_hero_point = None
         self._hero_height = None
         self._image_processor = image_processor
-        self._second_scroll_adjust_factor = 6.65
+        self._second_scroll_adjust_factor = 6.68
 
     def scroll_up_heroes_list(self, image=None):
         if image is None:

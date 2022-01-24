@@ -32,15 +32,12 @@ class GreenBarStrategy:
                                                   [self._image_processor.image], seconds_waiting=2)
 
         if execution_result == MethodExecutor.SUCCESS:
-            execution_result = MethodExecutor.execute(self.return_to_work,
-                                                      [self._image_processor.image],
-                                                      self._image_processor.is_playing,
-                                                      [self._image_processor.image])
+            MethodExecutor.execute(self.return_to_work,
+                                                  [self._image_processor.image],
+                                                  self._image_processor.is_playing,
+                                                  [self._image_processor.image])
 
-            if execution_result == MethodExecutor.SUCCESS:
-                return True
-
-        return False
+        return True
 
     def close(self, image):
         close = self._image_processor.close(image)

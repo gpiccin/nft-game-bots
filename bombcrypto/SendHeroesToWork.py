@@ -29,9 +29,8 @@ class SendHeroesToWork:
 
             if execution_result == MethodExecutor.SUCCESS:
                 self._time_to_check_heroes.start()
-                return True
 
-        return False
+        return True
 
     def go_to_heroes_list(self, image):
         go_to_heroes = self._image_processor.go_to_heroes(image)
