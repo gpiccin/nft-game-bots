@@ -1,3 +1,5 @@
+import time
+
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.ConnectWallet import ConnectWallet
 from bombcrypto.GenericOk import GenericOk
@@ -23,6 +25,7 @@ class BombCryptoBot:
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
 
     def run(self):
+        time.sleep(1)
         image = self._bomb_crypto_image_processor.image()
 
         if image is None:

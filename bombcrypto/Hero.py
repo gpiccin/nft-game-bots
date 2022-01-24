@@ -18,7 +18,6 @@ class HeroesReader:
         self._first_hero_point = None
         self._hero_height = None
         self._image_processor = image_processor
-        self.heroes = {}
 
     def scroll_up_heroes_list(self, image=None):
         if image is None:
@@ -38,7 +37,7 @@ class HeroesReader:
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
 
-        pyautogui.drag(0, -self._hero_height * 6.5, duration=1,
+        pyautogui.drag(0, -self._hero_height * 6.6, duration=1,
                        button='left')
 
         ActionExecutor.click(self._last_hero_point)
@@ -48,26 +47,15 @@ class HeroesReader:
         self.update_first_hero_point(image)
 
         heroes = {}
-        new_heroes = self._load_heroes(self._image_processor.image())
-
-        if new_heroes is not None:
-            heroes.update(new_heroes)
+        self._load_heroes(heroes)
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list()
-            new_heroes = self._load_heroes(self._image_processor.image())
-
-            if new_heroes is not None:
-                heroes.update(new_heroes)
+            self._load_heroes(heroes)
 
         if len(heroes) == 10:
             self.scroll_down_heroes_list()
-            new_heroes = self._load_heroes(self._image_processor.image())
-
-            if new_heroes is not None:
-                heroes.update(new_heroes)
-
-        self.heroes = heroes
+            self._load_heroes(heroes)
 
         self._logger.info('Heroes found: ' + str(len(heroes)))
 
@@ -77,39 +65,36 @@ class HeroesReader:
 
         return heroes
 
+    def _load_heroes(self, heroes):
+        new_heroes = self._read_heroes(self._image_processor.image())
+
+        if new_heroes is not None:
+            heroes.update(new_heroes)
+
     def find_hero(self, image, id):
-        heroes = self._load_heroes(image)
+        heroes = self._read_heroes(image)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
 
+        heroes = {}
         self.scroll_up_heroes_list()
 
-        heroes = {}
-        new_heroes = self._load_heroes(self._image_processor.image())
-
-        if new_heroes is not None:
-            heroes.update(new_heroes)
+        self._load_heroes(heroes)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list()
-            new_heroes = self._load_heroes(self._image_processor.image())
-
-            if new_heroes is not None:
-                heroes.update(new_heroes)
+            self._load_heroes(heroes)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
 
         if len(heroes) == 10:
             self.scroll_down_heroes_list()
-            new_heroes = self._load_heroes(self._image_processor.image())
-
-            if new_heroes is not None:
-                heroes.update(new_heroes)
+            self._load_heroes(heroes)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
@@ -123,7 +108,7 @@ class HeroesReader:
 
         return heroes.get(id) is not None
 
-    def _load_heroes(self, image=None) -> {}:
+    def _read_heroes(self, image=None) -> {}:
         if image is None:
             image = self._image_processor.image()
 
@@ -145,9 +130,9 @@ class HeroesReader:
                 len(work_buttons_rectangles) != len(rest_buttons_rectangles):
             return
 
-        heroes = {}
-
         self.update_last_hero_point(bars_rectangles[len(bars_rectangles) - 1])
+
+        heroes = {}
 
         for hero_line_number in range(len(bars_rectangles)):
             hero = self.create_hero(image,
