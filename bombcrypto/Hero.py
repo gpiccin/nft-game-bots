@@ -25,8 +25,6 @@ class HeroesReader:
             image = self._image_processor.image()
 
         self.update_first_hero_point(image)
-
-        ActionExecutor.click(self._first_hero_point)
         ActionExecutor.click(self._first_hero_point)
 
         pyautogui.drag(0, self._hero_height * 15, duration=0.3,
@@ -35,7 +33,6 @@ class HeroesReader:
         time.sleep(0.5)
 
     def scroll_down_heroes_list(self, adjust_factor=6.56):
-        ActionExecutor.click(self._last_hero_point)
         ActionExecutor.click(self._last_hero_point)
 
         pyautogui.drag(0, -self._hero_height * adjust_factor, duration=1,
