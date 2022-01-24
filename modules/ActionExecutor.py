@@ -13,7 +13,7 @@ class ActionExecutor:
         system = platform.system()
 
         if system == "Linux" or system == "Windows":
-            pyautogui.hotkey('ctrl', 'f5')
+            pyautogui.hotkey('f5')
             return
 
         pyautogui.hotkey('command', 'shift', 'R')

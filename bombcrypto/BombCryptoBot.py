@@ -31,10 +31,10 @@ class BombCryptoBot:
         if image is None:
             return
 
-        if self._connect_wallet.run(image):
+        if self._generic_ok.run(image):
             return
 
-        if self._generic_ok.run(image):
+        if self._connect_wallet.run(image):
             return
 
         if self._treasure_hunt.run(image):
