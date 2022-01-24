@@ -1,4 +1,5 @@
 import logging
+import math
 import platform
 from random import uniform
 import pyautogui
@@ -21,7 +22,7 @@ class ActionExecutor:
     @staticmethod
     def move_to(point):
         x, y = point
-        pyautogui.moveTo(x, y, duration=uniform(0.2, 0.5), logScreenshot=False)
+        pyautogui.moveTo(math.trunc(x), math.trunc(y), duration=uniform(0.2, 0.5), logScreenshot=False)
         return point
 
     @staticmethod
@@ -31,13 +32,12 @@ class ActionExecutor:
         position_x = x + width * uniform(0.1, 0.9)
         position_y = y + height * uniform(0.1, 0.9)
 
-        x, y = ActionExecutor.move_to((position_x, position_y))
-
-        logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
-        pyautogui.click()
+        ActionExecutor.move_to((position_x, position_y))
+        ActionExecutor.click((position_x, position_y))
 
     @staticmethod
     def click(point):
-        x, y = ActionExecutor.move_to(point)
+        x, y = point
+        ActionExecutor.move_to((math.trunc(x), math.trunc(y)))
         logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
         pyautogui.click()
