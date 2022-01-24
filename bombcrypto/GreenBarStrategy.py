@@ -19,9 +19,9 @@ class GreenBarStrategy:
             return False
 
         heroes = self._heroes_header.load_all_heroes(image)
-        #heroes_ids = list(reversed(sorted(heroes.keys())))
+        heroes_ids = list(reversed(heroes.keys()))
 
-        for hero_id in heroes:
+        for hero_id in heroes_ids:
             hero = heroes[hero_id]
             if hero.energy_level != Hero.RED_ENERGY:
                 hero.send_to_work()
