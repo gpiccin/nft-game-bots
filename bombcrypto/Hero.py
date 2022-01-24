@@ -18,7 +18,7 @@ class HeroesReader:
         self._first_hero_point = None
         self._hero_height = None
         self._image_processor = image_processor
-        self._second_scroll_adjust_factor = 6.68
+        self._second_scroll_adjust_factor = 6.67
 
     def scroll_up_heroes_list(self, image=None):
         if image is None:
@@ -39,21 +39,21 @@ class HeroesReader:
                        button='left')
 
         ActionExecutor.click(self._last_hero_point)
-        time.sleep(0.8)
+        time.sleep(1)
 
     def load_all_heroes(self, image):
         self.update_first_hero_point(image)
 
         heroes = {}
-        self._load_heroes(heroes)
+        self._load_heroes_from_screen(heroes)
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list()
-            self._load_heroes(heroes)
+            self._load_heroes_from_screen(heroes)
 
         if len(heroes) == 10:
             self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
-            self._load_heroes(heroes)
+            self._load_heroes_from_screen(heroes)
 
         self._logger.info('Heroes found: ' + str(len(heroes)))
 
@@ -63,39 +63,40 @@ class HeroesReader:
 
         return heroes
 
-    def _load_heroes(self, heroes):
-        new_heroes = self._read_heroes(self._image_processor.image())
+    def _load_heroes_from_screen(self, heroes, image=None):
+        if image is None:
+            image = self._image_processor.image()
+
+        new_heroes = self._read_heroes_from_screen(image)
 
         if new_heroes is not None:
             heroes.update(new_heroes)
 
     def find_hero(self, image, id):
-        heroes = self._read_heroes(image)
+        heroes = self._read_heroes_from_screen(image)
 
         if self.contains_hero(heroes, id):
             return heroes[id]
 
-        heroes = {}
         self.scroll_up_heroes_list()
-
-        self._load_heroes(heroes)
+        heroes = self._read_heroes_from_screen()
 
         if self.contains_hero(heroes, id):
             return heroes[id]
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list()
-            self._load_heroes(heroes)
+            heroes = self._read_heroes_from_screen()
 
-        if self.contains_hero(heroes, id):
-            return heroes[id]
+            if self.contains_hero(heroes, id):
+                return heroes[id]
 
         if len(heroes) == 10:
             self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
-            self._load_heroes(heroes)
+            heroes = self._read_heroes_from_screen()
 
-        if self.contains_hero(heroes, id):
-            return heroes[id]
+            if self.contains_hero(heroes, id):
+                return heroes[id]
 
         return None
 
@@ -106,7 +107,7 @@ class HeroesReader:
 
         return heroes.get(id) is not None
 
-    def _read_heroes(self, image=None) -> {}:
+    def _read_heroes_from_screen(self, image=None) -> {}:
         if image is None:
             image = self._image_processor.image()
 
@@ -117,7 +118,7 @@ class HeroesReader:
         # self._image_processor.debug_image(image, [bars, rest_buttons])
 
         if bars is None or work_buttons is None or rest_buttons is None:
-            return
+            return None
 
         bars_rectangles = bars.rectangles()
         work_buttons_rectangles = work_buttons.rectangles()
