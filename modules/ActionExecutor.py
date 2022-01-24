@@ -23,8 +23,8 @@ class ActionExecutor:
         pyautogui.hotkey('command', 'shift', 'R')
 
     @staticmethod
-    def move_to(x, y):
-        pyautogui.moveTo(math.trunc(x), math.trunc(y), duration=uniform(0.2, 0.5), logScreenshot=False)
+    def _move_to(x, y):
+        pyautogui.moveTo(x, y, duration=uniform(0.2, 0.5), logScreenshot=False)
         return (x, y)
 
     @staticmethod
@@ -40,17 +40,10 @@ class ActionExecutor:
     def click(point):
         x, y = point
 
-        if x is numpy.int32:
-            x = np.trunc(x)
-        else:
-            x = math.trunc(x)
+        x = numpy.trunc(x)
+        y = numpy.trunc(y)
 
-        if y is numpy.int32:
-            y = np.trunc(y)
-        else:
-            y = math.trunc(y)
-
-        ActionExecutor.move_to(x, y)
+        ActionExecutor._move_to(x, y)
         logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
 
         pyautogui.click()

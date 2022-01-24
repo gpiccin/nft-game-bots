@@ -25,10 +25,10 @@ def run():
 
 def loop(bot: BombCryptoBot):
     while True:
-        try:
+        #try:
             bot.run()
-        except Exception as e:
-            logging.getLogger('start.run').error(str(e))
+        #except Exception as e:
+        #    logging.getLogger('start.run').error(str(e))
 
 
 def debug(bot: BombCryptoBot):
