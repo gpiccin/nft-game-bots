@@ -24,20 +24,15 @@ class MethodExecutor:
             if check_method:
                 attempts += 1
 
-                confirmed = False
-
                 timer.start()
                 while not timer.is_expired():
-                    time.sleep(seconds_waiting / 8)
+                    time.sleep(seconds_waiting / 4)
 
                     logger.debug('Execute check method ' + str(check_method))
                     confirmed = MethodExecutor._execute_method(check_method, check_arguments)
 
                     if confirmed:
-                        break
-
-                if confirmed:
-                    return MethodExecutor.SUCCESS
+                        return MethodExecutor.SUCCESS
 
                 if attempts > max_attempts:
                     return MethodExecutor.FAIL
