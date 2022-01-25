@@ -18,7 +18,8 @@ class MethodExecutor:
         logger = logging.getLogger(__name__)
 
         for n in range(max_attempts):
-            logger.debug('Execute method ' + str(method) + ' attempt ' + str(n))
+
+            logger.debug('Execute method ' + f'{method=}'.split('=')[0] + ' attempt ' + str(n))
             MethodExecutor._execute_method(method, method_arguments)
 
             if check_method:
@@ -26,10 +27,11 @@ class MethodExecutor:
 
                 timer.start()
                 while not timer.is_expired():
-                    time.sleep(seconds_waiting / 4)
+                    time.sleep(1)
 
                     logger.debug('Execute check method ' + str(check_method))
                     confirmed = MethodExecutor._execute_method(check_method, check_arguments)
+                    logger.debug('Check method result: ' + str(confirmed))
 
                     if confirmed:
                         return MethodExecutor.SUCCESS
