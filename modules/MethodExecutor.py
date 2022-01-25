@@ -9,35 +9,32 @@ class MethodExecutor:
     FAIL = 2
 
     @staticmethod
-    def execute(method, method_arguments, check_method=None, check_arguments=None,
+    def execute(method, method_arguments, check_method, check_arguments,
                 max_attempts=2, seconds_waiting=4):
 
         attempts = 0
         timer = TimeControl(seconds_waiting)
-
         logger = logging.getLogger(__name__)
 
         for n in range(max_attempts):
 
-            logger.debug('Execute method ' + f'{method=}'.split('=')[0] + ' attempt ' + str(n))
+            logger.debug('Execute method ' + str(method) + ' attempt ' + str(n))
+
+            attempts += 1
             MethodExecutor._execute_method(method, method_arguments)
 
-            if check_method:
-                attempts += 1
+            timer.start()
+            while not timer.is_expired():
+                time.sleep(0.5)
 
-                timer.start()
-                while not timer.is_expired():
-                    time.sleep(1)
+                logger.debug('Execute check method ' + str(check_method))
+                confirmed = MethodExecutor._execute_method(check_method, check_arguments)
+                logger.debug('Check method result: ' + str(confirmed))
 
-                    logger.debug('Execute check method ' + str(check_method))
-                    confirmed = MethodExecutor._execute_method(check_method, check_arguments)
-                    logger.debug('Check method result: ' + str(confirmed))
+                if confirmed:
+                    return MethodExecutor.SUCCESS
 
-                    if confirmed:
-                        return MethodExecutor.SUCCESS
-
-                if attempts > max_attempts:
-                    return MethodExecutor.FAIL
+        return MethodExecutor.FAIL
 
     @staticmethod
     def _execute_method(method, method_arguments):
