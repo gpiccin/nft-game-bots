@@ -25,7 +25,7 @@ class ImageProvider:
                 return self.load_images(self._image_loader.get_file_names())
 
         #self._logger.debug('Print screen')
-        return [ImageProvider.print_screen(0)]
+        return [ImageProvider.print_screen(1)]
 
     def image(self):
         if self._image_loader:
@@ -35,7 +35,7 @@ class ImageProvider:
                 return self.load_images([self._image_loader.get_file_names()[0]])[0]
 
         #self._logger.debug('Print screen')
-        return ImageProvider.print_screen(0)
+        return ImageProvider.print_screen(1)
 
     def load_images(self, image_names):
         images = []

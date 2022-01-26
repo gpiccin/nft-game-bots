@@ -1,19 +1,26 @@
-from os import listdir
+import os
+import sys
 import cv2
-
+import pathlib
 
 class ImageLoader:
     def __init__(self, folder_path):
         self._images = None
-        self.folder_path = folder_path
+        self.folder_path = os.path.normpath(folder_path)
         self._file_names = []
 
     def load(self):
-        file_names = listdir(self.folder_path)
+        # determine if application is a script file or frozen exe
+        if getattr(sys, 'frozen', False):
+            application_path = os.path.dirname(sys.executable)
+        elif __file__:
+            application_path = pathlib.Path().resolve() 
+            
+        file_names = os.listdir(os.path.join(application_path, self.folder_path))
         loaded_images = {}
 
         for file in file_names:
-            path = self.folder_path + '/' + file
+            path = os.path.join(application_path, self.folder_path, file)
             file_name = file[:file.find('.')]
 
             image = cv2.imread(path)

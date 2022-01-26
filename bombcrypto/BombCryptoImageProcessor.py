@@ -298,7 +298,7 @@ class BombCryptoImageProcessor:
         closest_color = ImageProcessor.closest_color(list_of_colors, color_found)
         return closest_color[0][1] == 167
 
-    def debug(self) -> []:
+    def debug(self):
         images = self._image_provider.images()
 
         behaviours = []
