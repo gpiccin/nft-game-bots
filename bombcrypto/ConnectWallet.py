@@ -20,6 +20,8 @@ class ConnectWallet:
                                               seconds_waiting=10)
 
             if execution_result == MethodExecutor.FAIL:
+                ActionExecutor.refresh_page()
+            else:
                 time_to_treasure_hunt = TimeControl(60)
                 time_to_treasure_hunt.start()
 
