@@ -1,13 +1,10 @@
 import base64
 import hashlib
 import logging
-import re
 import time
-import uuid
 
 import cv2
 import pyautogui
-from pytesseract import pytesseract
 
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from modules.ActionExecutor import ActionExecutor
