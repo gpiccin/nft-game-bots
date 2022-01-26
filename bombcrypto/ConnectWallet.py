@@ -1,6 +1,7 @@
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from modules.MethodExecutor import MethodExecutor
 from modules.ActionExecutor import ActionExecutor
+from modules.TimeControl import TimeControl
 
 
 class ConnectWallet:
@@ -19,6 +20,13 @@ class ConnectWallet:
                                               seconds_waiting=10)
 
             if execution_result == MethodExecutor.FAIL:
+                time_to_treasure_hunt = TimeControl(60)
+                time_to_treasure_hunt.start()
+
+                while not time_to_treasure_hunt.is_expired():
+                    if self._image_processor.is_treasure_hunt_screen(self._image_processor.image()):
+                        return True
+
                 ActionExecutor.refresh_page()
 
             return True
