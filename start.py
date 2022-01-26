@@ -24,11 +24,12 @@ def run():
     # return debug(bot)
     loop(bot)
 
+
 def loop(bot: BombCryptoBot):
     while True:
         try:
             time.sleep(0.5)
-            #debug(bot)
+            # debug(bot)
             bot.run()
             sys.stdout.write('.')
             sys.stdout.flush()

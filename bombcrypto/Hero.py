@@ -1,8 +1,11 @@
+import base64
+import hashlib
 import logging
 import re
 import time
 import uuid
 
+import cv2
 import pyautogui
 from pytesseract import pytesseract
 
@@ -240,13 +243,20 @@ class Hero:
         self.is_resting = closest_color[0][0] == 221
 
     def _set_id(self, id_image):
-        id_text = pytesseract.image_to_string(id_image)
-        id_text = re.findall(r'\d+', id_text)
+        # id_text = pytesseract.image_to_string(id_image)
+        # id_text = re.findall(r'\d+', id_text)
+        #
+        # if len(id_text) > 0:
+        #     self.id = id_text[0]
+        # else:
+        #     self.id = str(uuid.uuid1())
 
-        if len(id_text) > 0:
-            self.id = id_text[0]
-        else:
-            self.id = str(uuid.uuid1())
+        grayImage = cv2.cvtColor(id_image, cv2.COLOR_BGR2GRAY)
+        (thresh, blackAndWhiteImage) = cv2.threshold(grayImage, 127, 255, cv2.THRESH_BINARY)
+        #ImageProcessor.show(blackAndWhiteImage)
+
+        a = base64.b64encode(blackAndWhiteImage)
+        self.id = hashlib.md5(a).hexdigest()
 
         self._id_image = id_image
 
