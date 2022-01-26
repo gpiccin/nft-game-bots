@@ -16,7 +16,7 @@ class ConnectWallet:
                                               [image],
                                               self._image_processor.is_signed,
                                               [self._image_processor.image],
-                                              seconds_waiting=15)
+                                              seconds_waiting=25)
 
             if execution_result == MethodExecutor.FAIL:
                 ActionExecutor.refresh_page()

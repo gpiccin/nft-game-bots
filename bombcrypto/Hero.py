@@ -117,7 +117,7 @@ class HeroesReader:
         if len(bars_rectangles) != len(work_buttons_rectangles) or \
                 len(bars_rectangles) != len(rest_buttons_rectangles) or \
                 len(work_buttons_rectangles) != len(rest_buttons_rectangles):
-            return
+            return None
 
         self.update_last_hero_point(bars_rectangles[len(bars_rectangles) - 1])
 
