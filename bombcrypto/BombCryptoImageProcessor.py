@@ -286,7 +286,7 @@ class BombCryptoImageProcessor:
         return self.treasure_hunt(image) is not None
 
     def is_signed(self, image):
-        return self.is_loading_screen(image) or self.is_treasure_hunt_screen(image)
+        return not self.is_connect_wallet_screen(image) or self.is_treasure_hunt_screen(image)
 
     def is_connect_wallet_screen(self, image):
         return self.connect_wallet(image) is not None
