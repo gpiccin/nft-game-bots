@@ -46,12 +46,7 @@ class Hero:
         hero_line_image = self._image[y_bar:y_bar + h_bar,
                           x_bar:x_bar + x_rest - x_bar + w_rest]
 
-        hero_id_image = self._image[y_bar:y_bar + int(h_bar / 2),
-                        x_bar + w_bar + 2:x_bar + w_bar + 2 + int(w_bar * 9.8)]
-
-        # ImageProcessor.show(hero_line_image)
-
-        self._set_id(hero_id_image)
+        self._set_id(bar_rectangle)
         self._set_energy(hero_line_image)
         self._set_state(self._image[y_rest:y_rest + h_rest, x_rest:x_rest + w_rest])
 
@@ -64,8 +59,15 @@ class Hero:
 
         self.is_resting = closest_color[0][0] == 221
 
-    def _set_id(self, id_image):
-        gray_id_image = cv2.cvtColor(id_image, cv2.COLOR_BGR2YUV)
+    def _set_id(self, bar_rectangle):
+        x_bar, y_bar, w_bar, h_bar = bar_rectangle
+
+        hero_id_image = self._image[y_bar:y_bar + int(h_bar),
+                        x_bar + w_bar - 60:x_bar + w_bar + 2 + int(w_bar * 9.8)]
+
+        #ImageProcessor.show(hero_id_image)
+
+        gray_id_image = cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2HSV_FULL)
         # (thresh, black_and_white_id_image) = cv2.threshold(gray_id_image, 150, 255, cv2.THRESH_BINARY)
         #
         black_and_white_id_image_base64 = base64.b64encode(gray_id_image)

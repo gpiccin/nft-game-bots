@@ -47,9 +47,8 @@ class HeroList:
         for hero in self._heroes:
             hero_rectangle, is_hero = ImageProcessor.match(hero.id_image,
                                                            id_image, 0.9,
-                                                           use_gray_scale=True)
+                                                           use_gray_scale=False)
 
-            # self._logger.info(is_hero)
             if is_hero:
                 return hero, is_hero
 
