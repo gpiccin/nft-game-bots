@@ -238,12 +238,22 @@ class BombCryptoImageProcessor:
         return None
 
     def hero_bar(self, image) -> Optional[HeroLocalizationBar]:
-        images = ['hero-bar-0', 'hero-bar-0']
+        images = ['hero-bar-0', 'hero-bar-1']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
                                                          self._match_image_threshold)
 
         if has_image:
             return HeroLocalizationBar(rectangle)
+
+        return None
+
+    def character_title(self, image) -> Optional[Information]:
+        images = ['character-0']
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
+
+        if has_image:
+            return Information(rectangle)
 
         return None
 
