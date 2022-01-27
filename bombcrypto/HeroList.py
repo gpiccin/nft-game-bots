@@ -44,12 +44,9 @@ class HeroList:
         return None
 
     def _contains_hero(self, id_image):
-        # ImageProcessor.show(id_image, 'Finding')
-
         for hero in self._heroes:
-            # ImageProcessor.show(hero.id_image)
             hero_rectangle, is_hero = ImageProcessor.match(hero.id_image,
-                                                           id_image, 0.95,
+                                                           id_image, 0.98,
                                                            use_gray_scale=False)
 
             # self._logger.info(is_hero)

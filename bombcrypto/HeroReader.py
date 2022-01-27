@@ -19,7 +19,7 @@ class HeroReader:
         self._image_processor = image_processor
         self._first_scroll_adjust_factor = 6.55
         self._second_scroll_adjust_factor = 6.65
-        self._seconds_to_wait_before_read_screen = 1
+        self._seconds_to_wait_before_read_screen = 1.2
 
     def scroll_up_heroes_list(self, image=None):
         if image is None:
