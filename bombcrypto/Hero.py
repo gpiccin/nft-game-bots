@@ -63,15 +63,15 @@ class Hero:
         x_bar, y_bar, w_bar, h_bar = bar_rectangle
 
         hero_id_image = self._image[y_bar:y_bar + int(h_bar),
-                        x_bar + w_bar - 60:x_bar + w_bar + 2 + int(w_bar * 9.8)]
+                        x_bar + w_bar - 60:x_bar + w_bar + 2 + int(w_bar * 28)]
 
         #ImageProcessor.show(hero_id_image)
 
-        gray_id_image = cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2HSV_FULL)
-        # (thresh, black_and_white_id_image) = cv2.threshold(gray_id_image, 150, 255, cv2.THRESH_BINARY)
+        gray_id_image = cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2GRAY)
+        #(thresh, gray_id_image) = cv2.threshold(hero_id_image, 150, 255, cv2.THRESH_BINARY)
         #
         black_and_white_id_image_base64 = base64.b64encode(gray_id_image)
-        #ImageProcessor.show(id_image, 'Finding')
+        #ImageProcessor.show(gray_id_image, 'Finding')
 
         self.id = hashlib.md5(gray_id_image).hexdigest()
         self.id_image = gray_id_image
