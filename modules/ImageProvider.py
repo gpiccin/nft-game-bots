@@ -1,4 +1,5 @@
 import logging
+import time
 
 import mss
 import numpy as np

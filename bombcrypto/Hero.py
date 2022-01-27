@@ -1,163 +1,12 @@
 import base64
 import hashlib
 import logging
-import time
 
 import cv2
-import pyautogui
-import pyrect
 
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from modules.ActionExecutor import ActionExecutor
 from modules.ImageProcessor import ImageProcessor
 from modules.Rectangle import Rectangle
-
-
-class HeroesReader:
-    def __init__(self, image_processor: BombCryptoImageProcessor):
-        self._logger = logging.getLogger(type(self).__name__)
-        self._last_hero_point = None
-        self._first_hero_point = None
-        self._hero_height = None
-        self._image_processor = image_processor
-        self._first_scroll_adjust_factor = 6.55
-        self._second_scroll_adjust_factor = 6.65
-        self._seconds_to_wait_after_scroll_down = 1.2
-        self._seconds_to_wait_after_scroll_up = 1
-
-    def scroll_up_heroes_list(self, image=None):
-        if image is None:
-            image = self._image_processor.image()
-
-        self.update_first_hero_point(image)
-        ActionExecutor.click(self._first_hero_point)
-
-        pyautogui.drag(0, self._hero_height * 15, duration=0.3, button='left')
-        time.sleep(self._seconds_to_wait_after_scroll_up)
-
-    def scroll_down_heroes_list(self, adjust_factor):
-        ActionExecutor.click(self._last_hero_point)
-
-        pyautogui.drag(0, -self._hero_height * adjust_factor, duration=1, button='left')
-
-        ActionExecutor.click(self._last_hero_point)
-        time.sleep(self._seconds_to_wait_after_scroll_down)
-
-    def load_all_heroes(self, image):
-        self.update_first_hero_point(image)
-
-        heroes = {}
-        self._load_heroes_from_screen(heroes)
-
-        if len(heroes) == 5:
-            self.scroll_down_heroes_list(self._first_scroll_adjust_factor)
-            self._load_heroes_from_screen(heroes)
-
-        if len(heroes) == 10:
-            self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
-            self._load_heroes_from_screen(heroes)
-
-        self._logger.info(str(len(heroes)) + ' heroes found')
-
-        for h_id in heroes.keys():
-            hero = heroes[h_id]
-            self._logger.info('ID:' + h_id + ' | EL:' + str(hero.energy_level))
-
-        return heroes
-
-    def _load_heroes_from_screen(self, heroes):
-        new_heroes = self._read_heroes_from_screen()
-
-        if new_heroes is not None:
-            heroes.update(new_heroes)
-
-    def find_hero(self, id):
-        heroes = self._read_heroes_from_screen()
-        if self.contains_hero(heroes, id):
-            return heroes[id]
-
-        self.scroll_up_heroes_list()
-        heroes = self._read_heroes_from_screen()
-        if self.contains_hero(heroes, id):
-            return heroes[id]
-
-        self.scroll_down_heroes_list(self._first_scroll_adjust_factor)
-        heroes = self._read_heroes_from_screen()
-        if self.contains_hero(heroes, id):
-            return heroes[id]
-
-        self.scroll_down_heroes_list(self._second_scroll_adjust_factor)
-        heroes = self._read_heroes_from_screen()
-        if self.contains_hero(heroes, id):
-            return heroes[id]
-
-        return None
-
-    @staticmethod
-    def contains_hero(heroes, id):
-        if heroes is None:
-            return False
-
-        return heroes.get(id) is not None
-
-    def _read_heroes_from_screen(self) -> {}:
-        image = self._image_processor.image()
-
-        bars = self._image_processor.hero_bar(image)
-        work_buttons = self._image_processor.work(image)
-        rest_buttons = self._image_processor.rest(image)
-
-        # self._image_processor.debug_image(image, [bars, rest_buttons])
-
-        if bars is None or work_buttons is None or rest_buttons is None:
-            return None
-
-        bars_rectangles = bars.rectangles()
-        work_buttons_rectangles = work_buttons.rectangles()
-        rest_buttons_rectangles = rest_buttons.rectangles()
-
-        if len(bars_rectangles) != len(work_buttons_rectangles) or \
-                len(bars_rectangles) != len(rest_buttons_rectangles) or \
-                len(work_buttons_rectangles) != len(rest_buttons_rectangles):
-            return None
-
-        self.update_last_hero_point(bars_rectangles[len(bars_rectangles) - 1])
-
-        heroes = {}
-
-        for hero_line_number in range(len(bars_rectangles)):
-            hero = self.create_hero(image,
-                                    bars_rectangles[hero_line_number],
-                                    rest_buttons_rectangles[hero_line_number],
-                                    work_buttons_rectangles[hero_line_number])
-
-            heroes[hero.id] = hero
-
-        return heroes
-
-    def create_hero(self, image, bar_rectangle, rest_rectangle, work_rectangle):
-        hero = Hero(image, bar_rectangle, rest_rectangle, work_rectangle,
-                    self._image_processor, self)
-
-        return hero
-
-    def update_first_hero_point(self, image):
-        bars = self._image_processor.hero_bar(image)
-
-        first_bar = bars.first_rectangle()
-
-        self.set_hero_height(first_bar)
-
-        x_bar, y_bar, w_bar, h_bar = first_bar
-        self._first_hero_point = (x_bar, y_bar)
-
-    def update_last_hero_point(self, point):
-        x_bar, y_bar, w_bar, h_bar = point
-        self._last_hero_point = (x_bar, y_bar + h_bar)
-
-    def set_hero_height(self, rectangle):
-        x_bar, y_bar, w_bar, h_bar = rectangle
-        self._hero_height = h_bar
 
 
 class Hero:
@@ -169,8 +18,7 @@ class Hero:
     def __init__(self, image,
                  bar_rectangle, rest_rectangle,
                  work_rectangle,
-                 image_processor: BombCryptoImageProcessor,
-                 heroes_reader: HeroesReader):
+                 image_processor: BombCryptoImageProcessor):
 
         self._logger = logging.getLogger(type(self).__name__)
         self._image = image
@@ -178,42 +26,17 @@ class Hero:
         self._rest_rectangle = rest_rectangle
         self._work_rectangle = work_rectangle
         self._image_processor = image_processor
-        self._heroes_header = heroes_reader
-
-        self._send_to_work_attempts = 0
-        self._max_send_to_work_attempts = 2
-        self._seconds_to_wait_after_send_to_work = 1.2
 
         self.id = None
+        self.id_image = None
         self.type = type
         self.energy_level = None
         self.is_resting = None
         self._set_hero_information(bar_rectangle,
                                    rest_rectangle)
 
-    def get_work_rectangle(self):
+    def work_rectangle(self):
         return self._work_rectangle
-
-    def send_to_work(self):
-        if not self.is_resting:
-            return
-
-        self._logger.info('Send hero ID:' + self.id + ' | EL:' + str(self.energy_level) + ' to work')
-
-        hero = self._heroes_header.find_hero(self.id)
-
-        if hero is None:
-            self._logger.info('Hero ID:' + self.id + ' | EL:' + str(self.energy_level) + ' not found')
-
-            if self._send_to_work_attempts < self._max_send_to_work_attempts:
-                self._send_to_work_attempts += 1
-                self.send_to_work()
-
-            return
-
-        self._send_to_work_attempts = 0
-        ActionExecutor.click_rectangle(hero.get_work_rectangle())
-        time.sleep(self._seconds_to_wait_after_send_to_work)
 
     def _set_hero_information(self, bar_rectangle, rest_rectangle):
 
@@ -242,22 +65,13 @@ class Hero:
         self.is_resting = closest_color[0][0] == 221
 
     def _set_id(self, id_image):
-        # id_text = pytesseract.image_to_string(id_image)
-        # id_text = re.findall(r'\d+', id_text)
-        #
-        # if len(id_text) > 0:
-        #     self.id = id_text[0]
-        # else:
-        #     self.id = str(uuid.uuid1())
+        gray_id_image = cv2.cvtColor(id_image, cv2.COLOR_BGR2GRAY)
+        (thresh, black_and_white_id_image) = cv2.threshold(gray_id_image, 180, 255, cv2.THRESH_BINARY)
 
-        grayImage = cv2.cvtColor(id_image, cv2.COLOR_BGR2GRAY)
-        (thresh, blackAndWhiteImage) = cv2.threshold(grayImage, 127, 255, cv2.THRESH_BINARY)
-        #ImageProcessor.show(blackAndWhiteImage)
+        black_and_white_id_image_base64 = base64.b64encode(black_and_white_id_image)
 
-        a = base64.b64encode(blackAndWhiteImage)
-        self.id = hashlib.md5(a).hexdigest()
-
-        self._id_image = id_image
+        self.id = hashlib.md5(black_and_white_id_image_base64).hexdigest()
+        self.id_image = black_and_white_id_image
 
     def _set_energy(self, hero_line_image):
         energy_bar = self._image_processor.full_bar(hero_line_image)

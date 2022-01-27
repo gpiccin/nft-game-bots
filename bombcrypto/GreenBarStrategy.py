@@ -1,13 +1,16 @@
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from bombcrypto.Hero import Hero, HeroesReader
+from bombcrypto.Hero import Hero
+from bombcrypto.HeroActionExecutor import HeroActionExecutor
+from bombcrypto.HeroReader import HeroReader
 from modules.ActionExecutor import ActionExecutor
 from modules.MethodExecutor import MethodExecutor
 
 
 class GreenBarStrategy:
-    def __init__(self, bomb_crypto_image_processor: BombCryptoImageProcessor,
-                 heroes_reader: HeroesReader):
-        self._heroes_header = heroes_reader
+    def __init__(self,
+                 bomb_crypto_image_processor: BombCryptoImageProcessor,
+                 heroes_reader: HeroReader):
+        self._hero_reader = heroes_reader
         self._image_processor = bomb_crypto_image_processor
         self._hero_height = 0
         self._last_hero_point = None
@@ -18,13 +21,14 @@ class GreenBarStrategy:
         if not self._image_processor.is_in_the_heroes_screen(image):
             return False
 
-        heroes = self._heroes_header.load_all_heroes(image)
-        heroes_ids = list(reversed(heroes.keys()))
+        heroes = self._hero_reader.load_all_heroes(image)
+        reversed_heroes = heroes.reversed_heroes()
 
-        for hero_id in heroes_ids:
-            hero = heroes[hero_id]
+        hero_action_executor = HeroActionExecutor(self._hero_reader)
+
+        for hero in reversed_heroes:
             if hero.energy_level != Hero.RED_ENERGY:
-                hero.send_to_work()
+                hero_action_executor.send_to_work(hero)
 
         execution_result = MethodExecutor.execute(self.close,
                                                   [self._image_processor.image],

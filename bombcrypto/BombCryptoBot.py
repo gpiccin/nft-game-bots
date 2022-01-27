@@ -5,7 +5,7 @@ from bombcrypto.ConnectWallet import ConnectWallet
 from bombcrypto.GenericOk import GenericOk
 from bombcrypto.SendHeroesToWork import SendHeroesToWork
 from bombcrypto.GreenBarStrategy import GreenBarStrategy
-from bombcrypto.Hero import HeroesReader
+from bombcrypto.HeroReader import HeroReader
 from bombcrypto.TreasureHunt import TreasureHunt
 from bombcrypto.UnlockHeroes import UnlockHeroes
 from modules.ImageLoader import ImageLoader
@@ -19,7 +19,7 @@ class BombCryptoBot:
         self._connect_wallet = ConnectWallet(self._bomb_crypto_image_processor)
         self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor)
         self._go_to_heroes = SendHeroesToWork(self._bomb_crypto_image_processor)
-        self._heroes_reader = HeroesReader(self._bomb_crypto_image_processor)
+        self._heroes_reader = HeroReader(self._bomb_crypto_image_processor)
         self._green_bar_strategy = GreenBarStrategy(self._bomb_crypto_image_processor, self._heroes_reader)
         self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor)
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
