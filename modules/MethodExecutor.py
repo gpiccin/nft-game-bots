@@ -27,7 +27,7 @@ class MethodExecutor:
             while not timer.is_expired():
                 time.sleep(0.5)
                 confirmed = MethodExecutor._execute_method(check_method, check_arguments)
-                logger.debug('Execute check method ' + str(check_method) + ' returned ' + confirmed)
+                logger.debug('Execute check method ' + str(check_method) + ' returned ' + str(confirmed))
 
                 if confirmed:
                     return MethodExecutor.SUCCESS

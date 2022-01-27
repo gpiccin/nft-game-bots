@@ -66,7 +66,7 @@ class Hero:
 
     def _set_id(self, id_image):
         gray_id_image = cv2.cvtColor(id_image, cv2.COLOR_BGR2GRAY)
-        (thresh, black_and_white_id_image) = cv2.threshold(gray_id_image, 180, 255, cv2.THRESH_BINARY)
+        (thresh, black_and_white_id_image) = cv2.threshold(gray_id_image, 150, 255, cv2.THRESH_BINARY)
 
         black_and_white_id_image_base64 = base64.b64encode(black_and_white_id_image)
 

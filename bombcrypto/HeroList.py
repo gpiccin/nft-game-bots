@@ -49,7 +49,7 @@ class HeroList:
         for hero in self._heroes:
             # ImageProcessor.show(hero.id_image)
             hero_rectangle, is_hero = ImageProcessor.match(hero.id_image,
-                                                           id_image, 0.9,
+                                                           id_image, 0.95,
                                                            use_gray_scale=False)
 
             # self._logger.info(is_hero)
