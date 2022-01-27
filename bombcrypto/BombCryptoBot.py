@@ -1,7 +1,9 @@
 import time
 
+from bombcrypto.AllStrategy import AllStrategy
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.ConnectWallet import ConnectWallet
+from bombcrypto.GenericClose import GenericClose
 from bombcrypto.GenericOk import GenericOk
 from bombcrypto.SendHeroesToWork import SendHeroesToWork
 from bombcrypto.GreenBarStrategy import GreenBarStrategy
@@ -20,9 +22,10 @@ class BombCryptoBot:
         self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor)
         self._go_to_heroes = SendHeroesToWork(self._bomb_crypto_image_processor)
         self._heroes_reader = HeroReader(self._bomb_crypto_image_processor)
-        self._green_bar_strategy = GreenBarStrategy(self._bomb_crypto_image_processor, self._heroes_reader)
+        self._all_strategy = AllStrategy(self._bomb_crypto_image_processor)
         self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor)
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
+        self._generic_close = GenericClose(self._bomb_crypto_image_processor)
 
     def run(self):
         image = self._bomb_crypto_image_processor.image()
@@ -42,8 +45,11 @@ class BombCryptoBot:
         if self._go_to_heroes.run(image):
             return
 
-        if self._green_bar_strategy.run(image):
+        if self._all_strategy.run(image):
             return
 
         if self._unlock_heroes.run(image):
+            return
+
+        if self._generic_close.run(image):
             return

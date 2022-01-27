@@ -140,7 +140,7 @@ class BombCryptoImageProcessor:
     def all_heroes_to_work(self, image) -> Optional[SendAllHeroesToWorkClick]:
         images = ['send-all-heroes-to-work-button-0', 'send-all-heroes-to-work-button-0']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
-                                                         self._match_image_threshold)
+                                                         self._match_image_threshold, use_gray_scale=False)
 
         if has_image:
             return SendAllHeroesToWorkClick(rectangle)
@@ -279,6 +279,9 @@ class BombCryptoImageProcessor:
 
     def is_in_the_heroes_screen(self, image):
         return self.hero_bar(image) is not None
+
+    def is_all_working(self, image):
+        return self.all_heroes_to_work(image) is None
 
     def is_in_the_game_play_screen(self, image):
         return self.back(image) is not None
