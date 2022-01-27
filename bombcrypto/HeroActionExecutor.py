@@ -11,7 +11,7 @@ class HeroActionExecutor:
         self._logger = logging.getLogger(type(self).__name__)
         self._hero_reader = hero_reader
         self._send_to_work_attempts = 0
-        self._seconds_to_wait_after_send_to_work = 1
+        self._seconds_to_wait_after_send_to_work = 1.2
         self._max_send_to_work_attempts = 2
 
     def send_to_work(self, hero: Hero):

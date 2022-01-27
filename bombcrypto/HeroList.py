@@ -15,9 +15,6 @@ class HeroList:
     def __iter__(self):
         return iter(self._heroes)
 
-    def __reversed__(self):
-        return self._heroes
-
     def add_list(self, list):
         if not list:
             return

@@ -19,8 +19,6 @@ class HeroReader:
         self._image_processor = image_processor
         self._first_scroll_adjust_factor = 6.55
         self._second_scroll_adjust_factor = 6.65
-        self._seconds_to_wait_after_scroll_down = 1.2
-        self._seconds_to_wait_after_scroll_up = 1
         self._seconds_to_wait_before_read_screen = 1
 
     def scroll_up_heroes_list(self, image=None):
@@ -31,7 +29,6 @@ class HeroReader:
         ActionExecutor.click(self._first_hero_point)
 
         pyautogui.drag(0, self._hero_height * 15, duration=0.3, button='left')
-        time.sleep(self._seconds_to_wait_after_scroll_up)
 
     def scroll_down_heroes_list(self, adjust_factor):
         ActionExecutor.click(self._last_hero_point)
@@ -39,7 +36,6 @@ class HeroReader:
         pyautogui.drag(0, -self._hero_height * adjust_factor, duration=1, button='left')
 
         ActionExecutor.click(self._last_hero_point)
-        time.sleep(self._seconds_to_wait_after_scroll_down)
 
     def load_all_heroes(self, image) -> HeroList:
         self.update_first_hero_point(image)
