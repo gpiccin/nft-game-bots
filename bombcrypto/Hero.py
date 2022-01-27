@@ -5,10 +5,12 @@ import time
 
 import cv2
 import pyautogui
+import pyrect
 
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from modules.ActionExecutor import ActionExecutor
 from modules.ImageProcessor import ImageProcessor
+from modules.Rectangle import Rectangle
 
 
 class HeroesReader:
@@ -275,6 +277,8 @@ class Hero:
     def _get_energy_bar_image(self, hero_line_image):
         begin_energy_bar = self._image_processor.begin_energy_bar(hero_line_image)
         end_energy_bar = self._image_processor.end_energy_bar(hero_line_image)
+
+        begin_energy_bar_rect = Rectangle( begin_energy_bar.first_rectangle())
 
         x_begin_energy_bar, y_begin_energy_bar, \
         w_begin_energy_bar, h_begin_energy_bar = \
