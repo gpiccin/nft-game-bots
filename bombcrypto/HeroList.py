@@ -23,10 +23,12 @@ class HeroList:
             self.add(hero)
 
     def add(self, hero: Hero):
-        if hero and not self.contains_hero(hero.id_image):
+        searched_hero = self.get_hero(hero.id_image)
+
+        if hero and not searched_hero:
             self._heroes.append(hero)
         else:
-            self._logger.info('Duplicated hero: ' + hero.id)
+            self._logger.info('Duplicated hero: ' + hero.id + ' with hero: ' + searched_hero.id)
 
     def clean(self):
         self._heroes = []

@@ -68,10 +68,10 @@ class Hero:
         #ImageProcessor.show(hero_id_image)
 
         gray_id_image = cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2GRAY)
-        #(thresh, gray_id_image) = cv2.threshold(hero_id_image, 150, 255, cv2.THRESH_BINARY)
+        #(thresh, black_and_white_id_image) = cv2.threshold(gray_id_image, 127, 255, cv2.THRESH_BINARY)
         #
         black_and_white_id_image_base64 = base64.b64encode(gray_id_image)
-        #ImageProcessor.show(gray_id_image, 'Finding')
+        #ImageProcessor.show(black_and_white_id_image, 'Finding')
 
         self.id = hashlib.md5(gray_id_image).hexdigest()
         self.id_image = gray_id_image
