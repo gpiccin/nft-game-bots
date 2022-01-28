@@ -41,6 +41,9 @@ class ImageProcessor:
 
     @staticmethod
     def match(source_image, target_image, threshold, use_gray_scale=True):
+        if not source_image:
+            return None, False
+
         match_result = None
 
         if use_gray_scale:
