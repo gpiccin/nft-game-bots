@@ -27,13 +27,13 @@ def run():
 
 def loop(bot: BombCryptoBot):
     while True:
-        #try:
+        # try:
         time.sleep(0.5)
         # debug(bot)
         bot.run()
         sys.stdout.write('.')
         sys.stdout.flush()
-        #except Exception as e:
+        # except Exception as e:
         #    logging.getLogger('start.loop').error(str(e))
 
 
@@ -41,9 +41,5 @@ def debug(bot: BombCryptoBot):
     bot._bomb_crypto_image_processor.debug()
 
 
-sys.stdout.write(__name__)
-
 if __name__ == '__main__':
-    sys.stdout.write('main')
-    sys.stdout.flush()
     run()
