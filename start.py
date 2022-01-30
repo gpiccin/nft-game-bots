@@ -4,6 +4,7 @@ import time
 
 from bombcrypto.BombCryptoBot import BombCryptoBot
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from bombcrypto.BombCryptoOrchestrator import BombCryptoOrchestrator
 from modules.ImageLoader import ImageLoader
 from modules.ImageProvider import ImageProvider
 
@@ -22,26 +23,16 @@ def run():
     target_images_loader = ImageLoader('bombcrypto/target-images')
     bomb_crypto_image_processor = BombCryptoImageProcessor(image_provider, target_images_loader)
 
-    bot = BombCryptoBot(bomb_crypto_image_processor)
-    #return debug(bot)
-
-    loop(bot)
+    bot_orchestrator = BombCryptoOrchestrator(bomb_crypto_image_processor)
+    loop(bot_orchestrator)
 
 
-def loop(bot: BombCryptoBot):
+def loop(bot_orchestrator: BombCryptoOrchestrator):
     while True:
         # try:
-        time.sleep(0.5)
-        # debug(bot)
-        bot.run()
-        sys.stdout.write('.')
-        sys.stdout.flush()
+        bot_orchestrator.run()
         # except Exception as e:
         #    logging.getLogger('start.loop').error(str(e))
-
-
-def debug(bot: BombCryptoBot):
-    bot._bomb_crypto_image_processor.debug()
 
 
 if __name__ == '__main__':

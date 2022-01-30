@@ -1,3 +1,6 @@
+import sys
+import time
+
 from bombcrypto.AllStrategy import AllStrategy
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.ConnectWallet import ConnectWallet
@@ -8,12 +11,14 @@ from bombcrypto.HeroReader import HeroReader
 from bombcrypto.SendHeroesToWork import SendHeroesToWork
 from bombcrypto.TreasureHunt import TreasureHunt
 from bombcrypto.UnlockHeroes import UnlockHeroes
-from modules.ImageLoader import ImageLoader
-from modules.ImageProvider import ImageProvider
+from modules.ActionExecutor import ActionExecutor
+from modules.Rectangle import Rectangle
 
 
 class BombCryptoBot:
-    def __init__(self, bomb_crypto_image_processor: BombCryptoImageProcessor):
+    def __init__(self, position: Rectangle, bomb_crypto_image_processor: BombCryptoImageProcessor):
+        self.id = 'bot:' + position.to_string()
+        self.position = position
         self._bomb_crypto_image_processor = bomb_crypto_image_processor
         self._connect_wallet = ConnectWallet(self._bomb_crypto_image_processor)
         self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor)
@@ -24,6 +29,26 @@ class BombCryptoBot:
         self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor)
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
         self._generic_close = GenericClose(self._bomb_crypto_image_processor)
+        self._wait_seconds_after_resize_window = 5
+
+    def maximize_window(self):
+        ActionExecutor.click(self.position.random_point())
+        ActionExecutor.maximize()
+        time.sleep(self._wait_seconds_after_resize_window)
+
+    def return_window_to_default(self):
+        image = self._bomb_crypto_image_processor.image()
+
+        left_corner = self._bomb_crypto_image_processor.top_left_corner(image)
+
+        if left_corner is None:
+            return
+
+        left_corner_rectangle = left_corner.first_rectangle()
+
+        ActionExecutor.click(left_corner_rectangle.random_point())
+        ActionExecutor.maximize()
+        time.sleep(self._wait_seconds_after_resize_window)
 
     def run(self):
         image = self._bomb_crypto_image_processor.image()
@@ -51,5 +76,8 @@ class BombCryptoBot:
 
         if self._generic_close.run(image):
             return True
+
+        sys.stdout.write('.')
+        sys.stdout.flush()
 
         return False

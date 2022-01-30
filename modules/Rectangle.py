@@ -1,3 +1,4 @@
+import hashlib
 from random import uniform
 
 from pyrect import Rect
@@ -16,6 +17,9 @@ class Rectangle(Rect):
         position_x = self.left + self.width * uniform(0.1, 0.9)
         position_y = self.top + self.height * uniform(0.1, 0.9)
         return position_x, position_y
+
+    def to_string(self):
+        return str(self.top) + ':' + str(self.left)
 
     @staticmethod
     def create_list(rectangles, enableFloat=False, readOnly=False, onChange=None, onRead=None) -> []:

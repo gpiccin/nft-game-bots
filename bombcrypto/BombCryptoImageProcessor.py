@@ -23,16 +23,15 @@ class BombCryptoImageProcessor:
         self._target_images = target_images_loader
         self._target_images.load()
 
-    def image(self):
-        print_screen_image = self._image_provider.image()
+    def image_provider(self):
+        return self._image_provider
 
+    def image(self):
+        print_screen_image = self.image_provider().image()
         top_left = self.top_left_corner(print_screen_image)
 
         if top_left is None:
             return None
-
-        # ActionExecutor.click(top_left.first_rectangle().random_point())
-        # ActionExecutor.maximize()
 
         return print_screen_image
 

@@ -82,6 +82,7 @@ class HeroReader:
         self._logger.info('Read heroes')
 
         if wait_to_read:
+            self._logger.info('Waiting ' + str(self._seconds_to_wait_before_read_screen) + ' seconds to read')
             time.sleep(self._seconds_to_wait_before_read_screen)
 
         image = self._image_processor.image()
