@@ -3,6 +3,7 @@ import sys
 import cv2
 import pathlib
 
+
 class ImageLoader:
     def __init__(self, folder_path):
         self._images = None
@@ -12,18 +13,17 @@ class ImageLoader:
     def load(self):
         application_path = None
 
-        # determine if application is a script file or frozen exe
         if getattr(sys, 'frozen', False):
             application_path = os.path.dirname(sys.executable)
         elif __file__:
-            application_path = pathlib.Path().resolve() 
-            
+            application_path = pathlib.Path().resolve()
+
         file_names = os.listdir(os.path.join(application_path, self.folder_path))
         loaded_images = {}
 
         for file in file_names:
             path = os.path.join(application_path, self.folder_path, file)
-            file_name = file[:file.find('.')]
+            file_name = file[:file.find(b'.')]
 
             image = cv2.imread(path)
 

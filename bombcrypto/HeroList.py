@@ -1,4 +1,3 @@
-import hashlib
 import logging
 
 import cv2
@@ -18,11 +17,11 @@ class HeroList:
     def __iter__(self):
         return iter(self._heroes)
 
-    def add_list(self, list):
-        if not list:
+    def add_list(self, heroes_list):
+        if not heroes_list:
             return
 
-        for hero in list:
+        for hero in heroes_list:
             self.add(hero)
 
     def add(self, hero: Hero):
@@ -57,14 +56,7 @@ class HeroList:
                                                            use_gray_scale=False,
                                                            match_method=cv2.TM_CCOEFF_NORMED)
 
-            # hash = hashlib.md5(id_image).hexdigest()
-            # is_hero = hero.id == hash
-
             if is_hero:
                 return hero, is_hero
 
         return None, False
-
-    def contains_hero(self, id_image):
-        hero, is_hero = self._contains_hero(id_image)
-        return is_hero

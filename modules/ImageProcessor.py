@@ -46,8 +46,6 @@ class ImageProcessor:
         if source_image is None or not source_image.any():
             return None, False
 
-        match_result = None
-
         if use_gray_scale:
             source_gray_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2GRAY)
             target_gray_image = cv2.cvtColor(target_image, cv2.COLOR_BGR2GRAY)
@@ -55,14 +53,14 @@ class ImageProcessor:
         else:
             match_result = cv2.matchTemplate(source_image, target_image, match_method)
 
-        yloc, xloc = np.where(match_result >= threshold)
+        y_loc, x_loc = np.where(match_result >= threshold)
 
         width = target_image.shape[1]
         height = target_image.shape[0]
 
         rectangles = []
 
-        for (x, y) in zip(xloc, yloc):
+        for (x, y) in zip(x_loc, y_loc):
             rectangles.append([int(x), int(y), int(width), int(height)])
             rectangles.append([int(x), int(y), int(width), int(height)])
 
@@ -76,15 +74,13 @@ class ImageProcessor:
 
     @staticmethod
     def cut_rectangles(image, rectangle1: Rectangle, rectangle2: Rectangle):
-        cut_image = image[rectangle1.top:rectangle1.bottom,
-                          rectangle1.left:rectangle2.right]
+        cut_image = image[rectangle1.top:rectangle1.bottom, rectangle1.left:rectangle2.right]
 
         return cut_image
 
     @staticmethod
     def cut_rectangle(image, rectangle: Rectangle):
-        cut_image = image[rectangle.top:rectangle.bottom,
-                       rectangle.left:rectangle.right]
+        cut_image = image[rectangle.top:rectangle.bottom, rectangle.left:rectangle.right]
 
         return cut_image
 

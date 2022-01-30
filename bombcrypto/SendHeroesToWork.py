@@ -23,9 +23,9 @@ class SendHeroesToWork:
 
         if is_go_heroes_button_visible:
             execution_result = MethodExecutor.execute(self.go_to_heroes_list,
-                                              [self._image_processor.image],
-                                              self._image_processor.is_in_the_heroes_screen,
-                                              [self._image_processor.image])
+                                                      [self._image_processor.image],
+                                                      self._image_processor.is_in_the_heroes_screen,
+                                                      [self._image_processor.image])
 
             if execution_result == MethodExecutor.SUCCESS:
                 self._time_to_check_heroes.start()

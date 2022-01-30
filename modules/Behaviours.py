@@ -1,4 +1,3 @@
-from random import uniform
 from typing import List, Optional
 
 from modules.Rectangle import Rectangle

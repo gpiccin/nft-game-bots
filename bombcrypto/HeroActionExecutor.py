@@ -1,5 +1,4 @@
 import logging
-import time
 
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroReader import HeroReader

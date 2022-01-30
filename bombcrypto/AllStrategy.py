@@ -1,7 +1,4 @@
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from bombcrypto.Hero import Hero
-from bombcrypto.HeroActionExecutor import HeroActionExecutor
-from bombcrypto.HeroReader import HeroReader
 from modules.ActionExecutor import ActionExecutor
 from modules.MethodExecutor import MethodExecutor
 

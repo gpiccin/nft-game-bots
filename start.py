@@ -16,7 +16,7 @@ def is_debug_mode():
 
 
 def run():
-    # image_provider = ImageProvider('./bombcrypto/test-images', ['heroes-list-2'])
+    # image_provider = ImageProvider('./bombcrypto/test-images', ['heroes-heroes_list-2'])
     image_provider = ImageProvider()
     target_images_loader = ImageLoader('bombcrypto/target-images')
 

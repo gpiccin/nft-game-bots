@@ -41,7 +41,6 @@ class MethodExecutor:
         of_index = method_full_name.index(' of ')
         return method_full_name[method_index:of_index]
 
-
     @staticmethod
     def _execute_method(method, method_arguments):
         arguments = []

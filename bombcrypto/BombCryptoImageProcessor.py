@@ -1,9 +1,5 @@
 from typing import Optional
 
-from modules.ActionExecutor import ActionExecutor
-from modules.ImageProcessor import ImageProcessor
-from modules.ImageLoader import ImageLoader
-from modules.ImageProvider import ImageProvider
 from bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, \
     CloseClick, BackClick, \
     SendAllHeroesToWorkClick, \
@@ -11,6 +7,9 @@ from bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, Ok
     SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, \
     FullBarInformation, HeroLocalizationBar, BeginEnergyBarInformation, EndEnergyBarInformation
 from modules.Behaviours import Click, Information
+from modules.ImageLoader import ImageLoader
+from modules.ImageProcessor import ImageProcessor
+from modules.ImageProvider import ImageProvider
 
 
 class BombCryptoImageProcessor:
@@ -33,18 +32,6 @@ class BombCryptoImageProcessor:
 
         # ActionExecutor.click(top_left.first_rectangle().random_point())
         # ActionExecutor.maximize()
-
-        # top_right = self.top_right_corner(print_screen_image)
-        # bottom_left = self.bottom_left_corner(print_screen_image)
-        #
-        # trx, tr_y, trw, trh = top_right.first_rectangle()
-        # tlx, tly, tlw, tlh = top_left.first_rectangle()
-        # blx, bly, blw, blh = bottom_left.first_rectangle()
-        #
-        # rest_button_image = print_screen_image[tly:bly + blh, tlx:tlx + trx + tlw]
-
-        #ImageProcessor.draw_rectangles(print_screen_image, top_left.rectangles())
-        #ImageProcessor.show(print_screen_image)
 
         return print_screen_image
 
