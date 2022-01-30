@@ -6,14 +6,16 @@ from random import uniform
 import numpy
 import pyautogui
 
-from modules.Rectangle import Rectangle
-
 
 class ActionExecutor:
 
     @staticmethod
+    def drag(xOffset=0, yOffset=0, duration=0.0):
+        pyautogui.drag(xOffset, yOffset, duration=duration, button='left')
+
+    @staticmethod
     def refresh_page():
-        logging.getLogger(__name__).debug('Refreshing')
+        logging.getLogger(__name__).debug('Refresh browser')
 
         system = platform.system()
 
@@ -26,13 +28,16 @@ class ActionExecutor:
 
     @staticmethod
     def maximize():
-        logging.getLogger(__name__).debug('Maximizing')
+        logging.getLogger(__name__).debug('Maximize')
 
         system = platform.system()
 
-        if system == "Linux" or system == "Windows":
-            pyautogui.hotkey('f5')
-            time.sleep(5)
+        if system == "Windows":
+            pyautogui.hotkey('f11')
+            return
+
+        if system == "Linux":
+            pyautogui.hotkey('alt', 'f10')
             return
 
         pyautogui.hotkey('command', 'ctrl', '=')
@@ -41,10 +46,6 @@ class ActionExecutor:
     def _move_to(x, y):
         pyautogui.moveTo(x, y, duration=uniform(0.1, 0.3), logScreenshot=False)
         return x, y
-
-    @staticmethod
-    def click_rectangle(rectangle: Rectangle):
-        ActionExecutor.click(rectangle.random_point())
 
     @staticmethod
     def click(point):

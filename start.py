@@ -3,6 +3,7 @@ import sys
 import time
 
 from bombcrypto.BombCryptoBot import BombCryptoBot
+from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from modules.ImageLoader import ImageLoader
 from modules.ImageProvider import ImageProvider
 
@@ -19,8 +20,9 @@ def run():
     # image_provider = ImageProvider('./bombcrypto/test-images', ['heroes-heroes_list-2'])
     image_provider = ImageProvider()
     target_images_loader = ImageLoader('bombcrypto/target-images')
+    bomb_crypto_image_processor = BombCryptoImageProcessor(image_provider, target_images_loader)
 
-    bot = BombCryptoBot(image_provider, target_images_loader)
+    bot = BombCryptoBot(bomb_crypto_image_processor)
     #return debug(bot)
 
     loop(bot)

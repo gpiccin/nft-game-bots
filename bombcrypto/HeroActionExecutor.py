@@ -31,4 +31,4 @@ class HeroActionExecutor:
         self._send_to_work_attempts = 0
 
         if searched_hero is not None:
-            ActionExecutor.click_rectangle(searched_hero.work_rectangle())
+            ActionExecutor.click(searched_hero.work_rectangle().random_point())

@@ -43,7 +43,7 @@ class ImageProcessor:
 
     @staticmethod
     def match(source_image, target_image, threshold, use_gray_scale=True, match_method=cv2.TM_CCOEFF_NORMED):
-        if source_image is None or not source_image.any():
+        if source_image is None:
             return None, False
 
         if use_gray_scale:

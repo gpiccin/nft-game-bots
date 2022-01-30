@@ -2,8 +2,6 @@ import logging
 import time
 from typing import Optional
 
-import pyautogui
-
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroList import HeroList
@@ -24,11 +22,11 @@ class HeroReader:
 
     def scroll_up_heroes_list(self):
         ActionExecutor.click(self._first_hero_point)
-        pyautogui.drag(0, 420, duration=0.2, button='left')
+        ActionExecutor.drag(0, 420, 0.2)
 
     def scroll_down_heroes_list(self, y_offset, duration=2.2):
         ActionExecutor.click(self._last_hero_point)
-        pyautogui.drag(0, y_offset, duration=duration, button='left')
+        ActionExecutor.drag(0, y_offset, duration)
         ActionExecutor.click(self._first_hero_point)
 
     def load_all_heroes(self) -> HeroList:

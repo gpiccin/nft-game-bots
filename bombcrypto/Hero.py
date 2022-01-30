@@ -38,7 +38,7 @@ class Hero:
         self._set_id()
         self._set_energy()
 
-    def work_rectangle(self):
+    def work_rectangle(self) -> Rectangle:
         return self._work_rectangle
 
     def _set_state(self):
