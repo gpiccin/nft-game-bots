@@ -31,8 +31,8 @@ class BombCryptoImageProcessor:
         if top_left is None:
             return None
 
-        ActionExecutor.click(top_left.first_rectangle().random_point())
-        ActionExecutor.maximize()
+        # ActionExecutor.click(top_left.first_rectangle().random_point())
+        # ActionExecutor.maximize()
 
         return print_screen_image
 
