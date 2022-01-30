@@ -43,18 +43,13 @@ class ActionExecutor:
         pyautogui.hotkey('command', 'ctrl', '=')
 
     @staticmethod
-    def _move_to(x, y):
-        pyautogui.moveTo(x, y, duration=uniform(0.1, 0.3), logScreenshot=False)
-        return x, y
-
-    @staticmethod
     def click(point):
         x, y = point
 
         x = int(numpy.trunc(x))
         y = int(numpy.trunc(y))
 
-        ActionExecutor._move_to(x, y)
-        logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
+        pyautogui.moveTo(x, y, duration=uniform(0.1, 0.3), logScreenshot=False)
 
+        logging.getLogger(__name__).debug('Click (' + str(x) + ',' + str(y) + ')')
         pyautogui.click()
