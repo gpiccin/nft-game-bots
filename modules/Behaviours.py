@@ -53,7 +53,7 @@ class Click(Information):
 
         return points[0]
 
-    def random_points(self) -> List[tuple[int, int]]:
+    def random_points(self):
         points = []
 
         for rectangle in self._rectangles:
