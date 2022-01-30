@@ -47,47 +47,7 @@ class Hero:
 
     def _set_id(self):
         hero_id_image = Hero.extract_id_image(self._image, self._bar_rectangle)
-
-        # COLOR_BGR2HSV_FULL = 66
-        #
-        # COLOR_BGR2Lab = 44
-        # COLOR_BGR2LAB = 44
-        # COLOR_BGR2Luv = 50
-        # COLOR_BGR2LUV = 50
-        # COLOR_BGR2RGB = 4
-        # COLOR_BGR2RGBA = 2
-        # COLOR_BGR2XYZ = 32
-        # COLOR_BGR2YCrCb = 36
-        #
-        # COLOR_BGR2YCR_CB = 36
-        #
-        # COLOR_BGR2YUV = 82
-        #
-        # COLOR_BGR2YUV_I420 = 128
-        # COLOR_BGR2YUV_IYUV = 128
-        # COLOR_BGR2YUV_YV12 = 132
-
         rgb_id_image = cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2RGB)
-        gray_id_image = cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2GRAY)
-        (thresh, black_and_white_id_image) = cv2.threshold(gray_id_image, 160, 255, cv2.THRESH_BINARY)
-
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2Lab), 'COLOR_BGR2Lab')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2Luv), 'COLOR_BGR2Luv')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2LUV), 'COLOR_BGR2LUV')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2RGB), 'COLOR_BGR2RGB')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2RGBA), 'COLOR_BGR2RGBA')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2XYZ), 'COLOR_BGR2XYZ')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2YCrCb), 'COLOR_BGR2YCrCb')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2YCR_CB), 'COLOR_BGR2YCR_CB')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2YUV), 'COLOR_BGR2YUV')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2YUV_I420), 'COLOR_BGR2YUV_I420')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2YUV_IYUV), 'COLOR_BGR2YUV_IYUV')
-        # ImageProcessor.show(cv2.cvtColor(hero_id_image, cv2.COLOR_BGR2YUV_YV12), 'COLOR_BGR2YUV_YV12')
-
-
-        black_and_white_id_image_base64 = base64.b64encode(rgb_id_image)
-        #ImageProcessor.show(rgb_id_image, 'Finding')
-        #ImageProcessor.show(black_and_white_id_image, 'Black and white')
 
         self.id = hashlib.md5(rgb_id_image).hexdigest()
         self.id_image = rgb_id_image
@@ -121,6 +81,12 @@ class Hero:
         return energy_bar_image
 
     @staticmethod
+    def extract_half_of_energy_bar_image(energy_bar_image):
+        width = energy_bar_image.shape[1]
+        height = energy_bar_image.shape[0]
+        return energy_bar_image[0: height, 0:int(width / 2)]
+
+    @staticmethod
     def extract_hero_line_image(image, bar_rectangle: Rectangle, rest_rectangle: Rectangle):
         hero_line = ImageProcessor.cut_rectangles(image, bar_rectangle, rest_rectangle)
         return hero_line
@@ -132,21 +98,16 @@ class Hero:
 
     @staticmethod
     def extract_id_image(image, bar_rectangle: Rectangle):
-        # id_image = image[bar_rectangle.top:bar_rectangle.top + bar_rectangle.height,
-        #
-        #            bar_rectangle.left + bar_rectangle.width - 60:
-        #            bar_rectangle.left + bar_rectangle.width + 2 + int(bar_rectangle.width * 28)]
-
         id_image = image[bar_rectangle.top + 6: bar_rectangle.top + 24,
                    bar_rectangle.left + bar_rectangle.width:
                    bar_rectangle.left + bar_rectangle.width + 80]
-
 
         return id_image
 
     @staticmethod
     def is_hero_energy_bar_green(energy_bar_image):
-        color_found = ImageProcessor.dominant_color(energy_bar_image)
+        half_energy_bar = Hero.extract_half_of_energy_bar_image(energy_bar_image)
+        color_found = ImageProcessor.dominant_color(half_energy_bar)
         list_of_colors = [[192, 151, 127], [176, 167, 127]]
         closest_color = ImageProcessor.closest_color(list_of_colors, color_found)
         return closest_color[0][1] == 167

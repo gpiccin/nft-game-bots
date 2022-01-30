@@ -25,6 +25,19 @@ class ActionExecutor:
         pyautogui.hotkey('command', 'shift', 'R')
 
     @staticmethod
+    def maximize():
+        logging.getLogger(__name__).debug('Maximizing')
+
+        system = platform.system()
+
+        if system == "Linux" or system == "Windows":
+            pyautogui.hotkey('f5')
+            time.sleep(5)
+            return
+
+        pyautogui.hotkey('command', 'shift', '=')
+
+    @staticmethod
     def _move_to(x, y):
         pyautogui.moveTo(x, y, duration=uniform(0.1, 0.3), logScreenshot=False)
         return x, y

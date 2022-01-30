@@ -1,5 +1,6 @@
 from typing import Optional
 
+from modules.ActionExecutor import ActionExecutor
 from modules.ImageProcessor import ImageProcessor
 from modules.ImageLoader import ImageLoader
 from modules.ImageProvider import ImageProvider
@@ -29,6 +30,9 @@ class BombCryptoImageProcessor:
 
         if top_left is None:
             return None
+
+        # ActionExecutor.click(top_left.first_rectangle().random_point())
+        # ActionExecutor.maximize()
 
         # top_right = self.top_right_corner(print_screen_image)
         # bottom_left = self.bottom_left_corner(print_screen_image)

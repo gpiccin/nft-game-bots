@@ -29,12 +29,11 @@ class HeroReader:
     def scroll_down_heroes_list(self, y_offset, duration=2.2):
         ActionExecutor.click(self._last_hero_point)
         pyautogui.drag(0, y_offset, duration=duration, button='left')
-        #pyautogui.click()
         ActionExecutor.click(self._first_hero_point)
 
     def load_all_heroes(self) -> HeroList:
         heroes = HeroList()
-        heroes.add_list(self._read_heroes_from_screen())
+        heroes.add_list(self._read_heroes_from_screen(wait_to_read=False))
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list(self._first_scroll_y_offset)
@@ -66,7 +65,7 @@ class HeroReader:
         if hero:
             return hero
 
-        self.scroll_down_heroes_list(self._second_scroll_y_offset)
+        self.scroll_down_heroes_list(self._second_scroll_y_offset, 0.2)
         hero = self._get_hero_from_screen(id_image)
         if hero:
             return hero
@@ -79,12 +78,14 @@ class HeroReader:
         if heroes is None:
             return None
 
-        return heroes.get_hero(id_image, 0.98)
+        return heroes.get_hero(id_image, 0.995)
 
-    def _read_heroes_from_screen(self) -> Optional[HeroList]:
+    def _read_heroes_from_screen(self, wait_to_read=True) -> Optional[HeroList]:
         self._logger.info('Read heroes')
 
-        time.sleep(self._seconds_to_wait_before_read_screen)
+        if wait_to_read:
+            time.sleep(self._seconds_to_wait_before_read_screen)
+
         image = self._image_processor.image()
         self._update_heroes_position_information(image)
 
@@ -101,19 +102,12 @@ class HeroReader:
 
         heroes = HeroList()
 
-        # copy = image.copy()
-
         for bar_rectangle in bar_rectangles:
+            estimated_work_rectangle = HeroReader._create_estimated_button_position(bar_rectangle,
+                                                                                    work_button_rectangle_reference)
 
-            estimated_rest_rectangle = HeroReader._create_estimated_rest_button_position(bar_rectangle,
-                                                                                         rest_button_rectangle_reference)
-
-            estimated_work_rectangle = HeroReader._create_estimated_work_button_position(bar_rectangle,
-                                                                                         work_button_rectangle_reference)
-
-            # ImageProcessor.draw_rectangle(copy, bar_rectangle)
-            # ImageProcessor.draw_rectangle(copy, estimated_rest_rectangle)
-            # ImageProcessor.draw_rectangle(copy, estimated_work_rectangle)
+            estimated_rest_rectangle = HeroReader._create_estimated_button_position(bar_rectangle,
+                                                                                    rest_button_rectangle_reference)
 
             hero = Hero(image,
                         bar_rectangle,
@@ -125,32 +119,19 @@ class HeroReader:
 
             self._logger.info('ID:' + hero.id + ' | EL:' + str(hero.energy_level))
 
-        # ImageProcessor.show(copy)
         self._logger.info(str(len(heroes)) + ' heroes read')
 
         return heroes
 
     @staticmethod
-    def _create_estimated_rest_button_position(bar_rectangle: Rectangle,
-                                                 reference_rest_button: Rectangle) -> Rectangle:
+    def _create_estimated_button_position(bar_rectangle: Rectangle,
+                                          reference_button: Rectangle) -> Rectangle:
         return Rectangle(
             (
-                reference_rest_button.right - reference_rest_button.width,
+                reference_button.right - reference_button.width,
                 bar_rectangle.top + 8,
-                reference_rest_button.width,
-                reference_rest_button.height
-            )
-        )
-
-    @staticmethod
-    def _create_estimated_work_button_position(bar_rectangle: Rectangle,
-                                               reference_work_button: Rectangle) -> Rectangle:
-        return Rectangle(
-            (
-                reference_work_button.right - reference_work_button.width,
-                bar_rectangle.top + 8,
-                reference_work_button.width,
-                reference_work_button.height
+                reference_button.width,
+                reference_button.height
             )
         )
 
@@ -159,7 +140,7 @@ class HeroReader:
 
         first_bar = bars.first_rectangle()
 
-        self._first_hero_point = (first_bar.left -5, first_bar.top)
+        self._first_hero_point = (first_bar.left - 5, first_bar.top)
         self._hero_height = first_bar.height
 
         last_bar = bars.last_rectangle()
