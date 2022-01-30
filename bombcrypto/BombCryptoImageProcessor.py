@@ -60,7 +60,7 @@ class BombCryptoImageProcessor:
         return None
 
     def top_left_corner(self, image) -> Optional[Information]:
-        images = ['top-left-corner-0', 'top-left-corner-1']
+        images = ['top-left-corner-2', 'top-left-corner-1', 'top-left-corner-0']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
                                                          self._match_image_threshold)
 
@@ -278,6 +278,9 @@ class BombCryptoImageProcessor:
             return Click(rectangle)
 
         return None
+
+    def is_go_to_heroes_screen(self, image):
+        return self.go_to_heroes(image) is not None
 
     def is_in_the_heroes_screen(self, image):
         return self.hero_bar(image) is not None

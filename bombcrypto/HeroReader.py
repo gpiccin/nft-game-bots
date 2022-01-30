@@ -24,6 +24,15 @@ class HeroReader:
         ActionExecutor.click(self._first_hero_point)
         ActionExecutor.drag(0, 420, 0.2)
 
+    def scroll_last_heroes_page(self):
+        ActionExecutor.click(self._last_hero_point)
+        ActionExecutor.drag(0, -420, 0.2)
+
+    def scroll_up_middle_heroes_list(self, y_offset, duration=2.2):
+        ActionExecutor.click(self._first_hero_point)
+        ActionExecutor.drag(0, y_offset, duration)
+        ActionExecutor.click(self._first_hero_point)
+
     def scroll_down_heroes_list(self, y_offset, duration=2.2):
         ActionExecutor.click(self._last_hero_point)
         ActionExecutor.drag(0, y_offset, duration)
@@ -31,15 +40,15 @@ class HeroReader:
 
     def load_all_heroes(self) -> HeroList:
         heroes = HeroList()
-        heroes.add_list(self._read_heroes_from_screen(wait_to_read=False))
+        heroes.add_list(self.read_heroes_from_screen(wait_to_read=False))
 
         if len(heroes) == 5:
             self.scroll_down_heroes_list(self._first_scroll_y_offset)
-            heroes.add_list(self._read_heroes_from_screen())
+            heroes.add_list(self.read_heroes_from_screen())
 
         if len(heroes) == 10:
             self.scroll_down_heroes_list(self._second_scroll_y_offset, 0.2)
-            heroes.add_list(self._read_heroes_from_screen())
+            heroes.add_list(self.read_heroes_from_screen())
 
         self._logger.info(str(len(heroes)) + ' heroes loaded')
 
@@ -71,14 +80,14 @@ class HeroReader:
         return None
 
     def _get_hero_from_screen(self, id_image) -> Optional[Hero]:
-        heroes = self._read_heroes_from_screen()
+        heroes = self.read_heroes_from_screen()
 
         if heroes is None:
             return None
 
         return heroes.get_hero(id_image, 0.995)
 
-    def _read_heroes_from_screen(self, wait_to_read=True) -> Optional[HeroList]:
+    def read_heroes_from_screen(self, wait_to_read=True) -> Optional[HeroList]:
         self._logger.info('Read heroes')
 
         if wait_to_read:
@@ -86,7 +95,7 @@ class HeroReader:
             time.sleep(self._seconds_to_wait_before_read_screen)
 
         image = self._image_processor.image()
-        self._update_heroes_position_information(image)
+        self.update_heroes_position_information(image)
 
         bars = self._image_processor.hero_bar(image)
         work_buttons = self._image_processor.work(image)
@@ -134,7 +143,7 @@ class HeroReader:
             )
         )
 
-    def _update_heroes_position_information(self, image):
+    def update_heroes_position_information(self, image):
         bars = self._image_processor.hero_bar(image)
 
         first_bar = bars.first_rectangle()

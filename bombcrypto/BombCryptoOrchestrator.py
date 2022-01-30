@@ -11,7 +11,7 @@ class BombCryptoOrchestrator:
         self._logger = logging.getLogger(type(self).__name__)
         self._bomb_crypto_image_processor = bomb_crypto_image_processor
         self._bots = []
-        self._seconds_to_check_bots = 60
+        self._seconds_to_check_bots = 3 * 60
 
     def read_bots(self):
         self._bots = []
@@ -45,4 +45,4 @@ class BombCryptoOrchestrator:
                 bot.return_window_to_default()
 
         self._logger.info('Waiting ' + str(self._seconds_to_check_bots) + ' seconds to check bots again')
-        time.sleep(60)
+        time.sleep(self._seconds_to_check_bots)

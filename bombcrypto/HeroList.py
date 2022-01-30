@@ -17,6 +17,16 @@ class HeroList:
     def __iter__(self):
         return iter(self._heroes)
 
+    def count_of_heroes_to_work(self):
+        count = 0
+
+        for hero in self._heroes:
+            if (hero.energy_level == Hero.GREEN_ENERGY or hero.energy_level == Hero.FULL_ENERGY) \
+                    and hero.is_resting:
+                count += 1
+
+        return count
+
     def add_list(self, heroes_list):
         if not heroes_list:
             return

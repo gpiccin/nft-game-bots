@@ -47,7 +47,7 @@ class SendHeroesToWork:
 
         return MethodExecutor.execute(self.slide_to_get_access_go_heroes_button,
                                       [image],
-                                      self._image_processor.go_to_heroes,
+                                      self._image_processor.is_go_to_heroes_screen,
                                       [self._image_processor.image])
 
     def slide_to_get_access_go_heroes_button(self, image):

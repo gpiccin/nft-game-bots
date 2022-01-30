@@ -1,6 +1,10 @@
+import time
+from typing import List
+
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroActionExecutor import HeroActionExecutor
+from bombcrypto.HeroList import HeroList
 from bombcrypto.HeroReader import HeroReader
 from modules.ActionExecutor import ActionExecutor
 from modules.MethodExecutor import MethodExecutor
@@ -21,14 +25,17 @@ class GreenBarStrategy:
         if not self._image_processor.is_in_the_heroes_screen(image):
             return False
 
-        heroes = self._hero_reader.load_all_heroes()
-        reversed_heroes = heroes.reversed_heroes()
+        self._hero_reader.update_heroes_position_information(image)
+        self._hero_reader.scroll_last_heroes_page()
+        self.send_heroes_to_work()
 
-        hero_action_executor = HeroActionExecutor(self._hero_reader)
+        time.sleep(2)
+        self._hero_reader.scroll_up_middle_heroes_list(325)
+        self.send_heroes_to_work()
 
-        for hero in reversed_heroes:
-            if hero.energy_level != Hero.RED_ENERGY:
-                hero_action_executor.send_to_work(hero)
+        time.sleep(2)
+        self._hero_reader.scroll_up_heroes_list()
+        self.send_heroes_to_work()
 
         execution_result = MethodExecutor.execute(self.close,
                                                   [self._image_processor.image],
@@ -48,6 +55,21 @@ class GreenBarStrategy:
                                        [self._image_processor.image])
 
         return True
+
+    def send_heroes_to_work(self) -> HeroList:
+        while True:
+            heroes = self._hero_reader.read_heroes_from_screen()
+            hero_action_executor = HeroActionExecutor(self._hero_reader)
+            reversed_heroes = heroes.reversed_heroes()
+
+            for hero in reversed_heroes:
+                if hero.energy_level != Hero.RED_ENERGY:
+                    hero_action_executor.send_to_work(hero)
+
+            if heroes.count_of_heroes_to_work() == 0:
+                break
+
+        return heroes
 
     def close(self, image):
         close = self._image_processor.close(image)
