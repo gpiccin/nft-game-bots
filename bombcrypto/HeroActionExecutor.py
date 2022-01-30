@@ -11,7 +11,6 @@ class HeroActionExecutor:
         self._logger = logging.getLogger(type(self).__name__)
         self._hero_reader = hero_reader
         self._send_to_work_attempts = 0
-        self._seconds_to_wait_after_send_to_work = 1.2
         self._max_send_to_work_attempts = 2
 
     def send_to_work(self, hero: Hero):
@@ -31,5 +30,6 @@ class HeroActionExecutor:
                 return
 
         self._send_to_work_attempts = 0
-        ActionExecutor.click_rectangle(searched_hero.work_rectangle())
-        time.sleep(self._seconds_to_wait_after_send_to_work)
+
+        if searched_hero is not None:
+            ActionExecutor.click_rectangle(searched_hero.work_rectangle())

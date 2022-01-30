@@ -22,6 +22,7 @@ class BombCryptoBot:
         self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor)
         self._go_to_heroes = SendHeroesToWork(self._bomb_crypto_image_processor)
         self._heroes_reader = HeroReader(self._bomb_crypto_image_processor)
+        self._green_bar_strategy = GreenBarStrategy(self._bomb_crypto_image_processor, self._heroes_reader)
         self._all_strategy = AllStrategy(self._bomb_crypto_image_processor)
         self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor)
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
@@ -45,7 +46,7 @@ class BombCryptoBot:
         if self._go_to_heroes.run(image):
             return
 
-        if self._all_strategy.run(image):
+        if self._green_bar_strategy.run(image):
             return
 
         if self._unlock_heroes.run(image):

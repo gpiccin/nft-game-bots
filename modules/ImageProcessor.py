@@ -1,9 +1,11 @@
 import random
+from typing import List
 
 import cv2
 import numpy as np
 
 from modules.ImageLoader import ImageLoader
+from modules.Rectangle import Rectangle
 
 
 class ImageProcessor:
@@ -40,7 +42,7 @@ class ImageProcessor:
         return r, g, b
 
     @staticmethod
-    def match(source_image, target_image, threshold, use_gray_scale=True):
+    def match(source_image, target_image, threshold, use_gray_scale=True, match_method=cv2.TM_CCOEFF_NORMED):
         if source_image is None or not source_image.any():
             return None, False
 
@@ -49,9 +51,9 @@ class ImageProcessor:
         if use_gray_scale:
             source_gray_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2GRAY)
             target_gray_image = cv2.cvtColor(target_image, cv2.COLOR_BGR2GRAY)
-            match_result = cv2.matchTemplate(source_gray_image, target_gray_image, cv2.TM_CCOEFF_NORMED)
+            match_result = cv2.matchTemplate(source_gray_image, target_gray_image, match_method)
         else:
-            match_result = cv2.matchTemplate(source_image, target_image, cv2.TM_CCOEFF_NORMED)
+            match_result = cv2.matchTemplate(source_image, target_image, match_method)
 
         yloc, xloc = np.where(match_result >= threshold)
 
@@ -59,26 +61,41 @@ class ImageProcessor:
         height = target_image.shape[0]
 
         rectangles = []
+
         for (x, y) in zip(xloc, yloc):
             rectangles.append([int(x), int(y), int(width), int(height)])
             rectangles.append([int(x), int(y), int(width), int(height)])
 
         rectangles, weights = cv2.groupRectangles(rectangles, 1, 0.2)
 
-        return rectangles, ImageProcessor._has_target_image(rectangles)
+        return Rectangle.create_list(rectangles), ImageProcessor._has_target_image(rectangles)
 
     @staticmethod
     def _has_target_image(rectangles):
-        return len(rectangles) != 0
+        return len(rectangles) > 0
 
     @staticmethod
-    def draw_rectangles(image, rectangles):
-        for (x, y, w, h) in rectangles:
-            cv2.rectangle(image, (x, y), (x + w, y + h), ImageProcessor.random_color(), 2)
+    def cut_rectangles(image, rectangle1: Rectangle, rectangle2: Rectangle):
+        cut_image = image[rectangle1.top:rectangle1.bottom,
+                          rectangle1.left:rectangle2.right]
+
+        return cut_image
 
     @staticmethod
-    def draw_rectangle(image, x, y, w, h):
-        cv2.rectangle(image, (x, y), (x + w, y + h), ImageProcessor.random_color(), 2)
+    def cut_rectangle(image, rectangle: Rectangle):
+        cut_image = image[rectangle.top:rectangle.bottom,
+                       rectangle.left:rectangle.right]
+
+        return cut_image
+
+    @staticmethod
+    def draw_rectangles(image, rectangles: List[Rectangle]):
+        for rect in rectangles:
+            ImageProcessor.draw_rectangle(image, rect)
+
+    @staticmethod
+    def draw_rectangle(image, rectangle: Rectangle):
+        cv2.rectangle(image, rectangle.topleft, rectangle.bottomright, ImageProcessor.random_color(), 2)
 
     @staticmethod
     def random_color():

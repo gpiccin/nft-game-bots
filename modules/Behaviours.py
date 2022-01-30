@@ -1,4 +1,7 @@
 from random import uniform
+from typing import List, Optional
+
+from modules.Rectangle import Rectangle
 
 
 class Behaviour:
@@ -12,10 +15,19 @@ class Information(Behaviour):
         super().__init__()
         self._rectangles = rectangles
 
-    def first_rectangle(self):
+    def first_rectangle(self) -> Optional[Rectangle]:
+        if len(self._rectangles) == 0:
+            return None
+
         return self._rectangles[0]
 
-    def rectangles(self):
+    def last_rectangle(self) -> Optional[Rectangle]:
+        if len(self._rectangles) == 0:
+            return None
+
+        return self._rectangles[len(self._rectangles) - 1]
+
+    def rectangles(self) -> List[Rectangle]:
         return self._rectangles
 
 
@@ -33,23 +45,18 @@ class Click(Information):
     def __init__(self, rectangles):
         super().__init__(rectangles)
 
-    def first_point(self):
-        points = self.points()
+    def single_random_point(self) -> Optional[tuple[int, int]]:
+        points = self.random_points()
 
         if len(points) == 0:
             return None
 
         return points[0]
 
-    def points(self) -> []:
+    def random_points(self) -> List[tuple[int, int]]:
         points = []
 
         for rectangle in self._rectangles:
-            x, y, width, height = rectangle
-
-            position_x = x + width * uniform(0.1, 0.9)
-            position_y = y + height * uniform(0.1, 0.9)
-
-            points.append((int(position_x), int(position_y)))
+            points.append(rectangle.random_point())
 
         return points

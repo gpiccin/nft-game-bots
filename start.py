@@ -16,12 +16,13 @@ def is_debug_mode():
 
 
 def run():
-    # image_provider = ImageProvider('./bombcrypto/test-images', ['heroes-list'])
+    # image_provider = ImageProvider('./bombcrypto/test-images', ['heroes-list-2'])
     image_provider = ImageProvider()
     target_images_loader = ImageLoader('bombcrypto/target-images')
 
     bot = BombCryptoBot(image_provider, target_images_loader)
-    # return debug(bot)
+    #return debug(bot)
+
     loop(bot)
 
 

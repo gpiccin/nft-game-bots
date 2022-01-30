@@ -44,22 +44,22 @@ class AllStrategy:
         all_to_work = self._image_processor.all_heroes_to_work(image)
 
         if all_to_work:
-            ActionExecutor.click(all_to_work.first_point())
+            ActionExecutor.click(all_to_work.single_random_point())
 
     def close(self, image):
         close = self._image_processor.close(image)
 
         if close:
-            ActionExecutor.click(close.first_point())
+            ActionExecutor.click(close.single_random_point())
 
     def return_to_work(self, image):
-        close = self._image_processor.slide_down_to_return_to_work(image)
+        coin = self._image_processor.coin(image)
 
-        if close:
-            ActionExecutor.click(close.first_point())
+        if coin:
+            ActionExecutor.click(coin.single_random_point())
 
     def go_to_back(self, image):
         back = self._image_processor.back(image)
 
         if back:
-            ActionExecutor.click(back.first_point())
+            ActionExecutor.click(back.single_random_point())

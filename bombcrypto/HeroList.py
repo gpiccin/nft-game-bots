@@ -1,4 +1,7 @@
+import hashlib
 import logging
+
+import cv2
 
 from bombcrypto.Hero import Hero
 from modules.ImageProcessor import ImageProcessor
@@ -23,7 +26,7 @@ class HeroList:
             self.add(hero)
 
     def add(self, hero: Hero):
-        searched_hero = self.get_hero(hero.id_image)
+        searched_hero = self.get_hero(hero.id_image, 1.0)
 
         if hero and not searched_hero:
             self._heroes.append(hero)
@@ -39,19 +42,23 @@ class HeroList:
     def reversed_heroes(self):
         return list(reversed(self._heroes))
 
-    def get_hero(self, id_image):
-        hero, is_hero = self._contains_hero(id_image)
+    def get_hero(self, id_image, threshold):
+        hero, is_hero = self._contains_hero(id_image, threshold=threshold)
 
         if is_hero:
             return hero
 
         return None
 
-    def _contains_hero(self, id_image):
-        for hero in self._heroes:
+    def _contains_hero(self, id_image, threshold):
+        for hero in self.reversed_heroes():
             hero_rectangle, is_hero = ImageProcessor.match(hero.id_image,
-                                                           id_image, 0.9,
-                                                           use_gray_scale=False)
+                                                           id_image, threshold,
+                                                           use_gray_scale=False,
+                                                           match_method=cv2.TM_CCOEFF_NORMED)
+
+            # hash = hashlib.md5(id_image).hexdigest()
+            # is_hero = hero.id == hash
 
             if is_hero:
                 return hero, is_hero

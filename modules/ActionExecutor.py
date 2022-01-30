@@ -6,6 +6,8 @@ from random import uniform
 import numpy
 import pyautogui
 
+from modules.Rectangle import Rectangle
+
 
 class ActionExecutor:
 
@@ -24,17 +26,12 @@ class ActionExecutor:
 
     @staticmethod
     def _move_to(x, y):
-        pyautogui.moveTo(x, y, duration=uniform(0.2, 0.5), logScreenshot=False)
-        return (x, y)
+        pyautogui.moveTo(x, y, duration=uniform(0.1, 0.3), logScreenshot=False)
+        return x, y
 
     @staticmethod
-    def click_rectangle(rectangle):
-        x, y, width, height = rectangle
-
-        position_x = x + width * uniform(0.1, 0.9)
-        position_y = y + height * uniform(0.1, 0.9)
-
-        ActionExecutor.click((position_x, position_y))
+    def click_rectangle(rectangle: Rectangle):
+        ActionExecutor.click(rectangle.random_point())
 
     @staticmethod
     def click(point):

@@ -36,7 +36,7 @@ class SendHeroesToWork:
         go_to_heroes = self._image_processor.go_to_heroes(image)
 
         if go_to_heroes:
-            ActionExecutor.click(go_to_heroes.first_point())
+            ActionExecutor.click(go_to_heroes.single_random_point())
             return True
 
         return False
@@ -54,7 +54,7 @@ class SendHeroesToWork:
         slide_up_to_go_heroes = self._image_processor.slide_up_to_go_heroes(image)
 
         if slide_up_to_go_heroes:
-            ActionExecutor.click(slide_up_to_go_heroes.first_point())
+            ActionExecutor.click(slide_up_to_go_heroes.single_random_point())
             return True
 
         return False

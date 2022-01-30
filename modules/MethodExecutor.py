@@ -18,7 +18,7 @@ class MethodExecutor:
 
         for n in range(max_attempts):
 
-            logger.debug('Execute method ' + str(method) + ' attempt ' + str(n))
+            logger.debug('Execute ' + MethodExecutor._get_method_name(method) + ' attempt ' + str(n))
 
             attempts += 1
             MethodExecutor._execute_method(method, method_arguments)
@@ -27,12 +27,20 @@ class MethodExecutor:
             while not timer.is_expired():
                 time.sleep(0.5)
                 confirmed = MethodExecutor._execute_method(check_method, check_arguments)
-                logger.debug('Execute check method ' + str(check_method) + ' returned ' + str(confirmed))
+                logger.debug('Check method ' + MethodExecutor._get_method_name(check_method) + ' = ' + str(confirmed))
 
                 if confirmed:
                     return MethodExecutor.SUCCESS
 
         return MethodExecutor.FAIL
+
+    @staticmethod
+    def _get_method_name(method):
+        method_full_name = str(method)
+        method_index = method_full_name.index('method ') + 7
+        of_index = method_full_name.index(' of ')
+        return method_full_name[method_index:of_index]
+
 
     @staticmethod
     def _execute_method(method, method_arguments):

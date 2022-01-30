@@ -37,9 +37,10 @@ class BombCryptoImageProcessor:
         # tlx, tly, tlw, tlh = top_left.first_rectangle()
         # blx, bly, blw, blh = bottom_left.first_rectangle()
         #
-        # image = print_screen_image[tly:bly + blh, tlx:tlx + trx + tlw]
+        # rest_button_image = print_screen_image[tly:bly + blh, tlx:tlx + trx + tlw]
 
-        #ImageProcessor.show(image)
+        #ImageProcessor.draw_rectangles(print_screen_image, top_left.rectangles())
+        #ImageProcessor.show(print_screen_image)
 
         return print_screen_image
 
@@ -270,10 +271,20 @@ class BombCryptoImageProcessor:
     def bombcrypto_logo(self, image) -> Optional[Information]:
         images = ['bomb-logo-0', 'bomb-logo-0']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
-                                                         self._match_image_threshold, False)
+                                                         self._match_image_threshold)
 
         if has_image:
             return Information(rectangle)
+
+        return None
+
+    def coin(self, image) -> Optional[Click]:
+        images = ['coin-0', 'coin-1']
+        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
+                                                         self._match_image_threshold)
+
+        if has_image:
+            return Click(rectangle)
 
         return None
 
@@ -304,13 +315,6 @@ class BombCryptoImageProcessor:
     def is_connect_wallet_screen(self, image):
         return self.connect_wallet(image) is not None
 
-    @staticmethod
-    def is_hero_energy_bar_green(image):
-        color_found = ImageProcessor.dominant_color(image)
-        list_of_colors = [[192, 151, 127], [176, 167, 127]]
-        closest_color = ImageProcessor.closest_color(list_of_colors, color_found)
-        return closest_color[0][1] == 167
-
     def debug(self):
         images = self._image_provider.images()
 
@@ -336,6 +340,8 @@ class BombCryptoImageProcessor:
             self._append_action(self.full_bar(image), image_behaviours)
             self._append_action(self.hero_bar(image), image_behaviours)
             self._append_action(self.bombcrypto_logo(image), image_behaviours)
+            self._append_action(self.character_title(image), image_behaviours)
+            self._append_action(self.coin(image), image_behaviours)
 
             self.debug_image(image, image_behaviours)
 
@@ -350,7 +356,7 @@ class BombCryptoImageProcessor:
         for action in actions:
             if isinstance(action, Click):
                 for _ in range(1000):
-                    points = action.points()
+                    points = action.random_points()
 
                     for point in points:
                         ImageProcessor.draw_circle(debug_image, point)

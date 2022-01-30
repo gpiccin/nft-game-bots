@@ -25,4 +25,4 @@ class TreasureHunt:
         treasure_hunt = self._image_processor.treasure_hunt(image)
 
         if treasure_hunt:
-            ActionExecutor.click(treasure_hunt.first_point())
+            ActionExecutor.click(treasure_hunt.single_random_point())

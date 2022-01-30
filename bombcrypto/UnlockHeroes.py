@@ -32,4 +32,4 @@ class UnlockHeroes:
         back = self._image_processor.back(image)
 
         if back:
-            ActionExecutor.click(back.first_point())
+            ActionExecutor.click(back.single_random_point())

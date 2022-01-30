@@ -24,4 +24,4 @@ class GenericClose:
         close = self._image_processor.close(image)
 
         if close:
-            ActionExecutor.click(close.first_point())
+            ActionExecutor.click(close.single_random_point())

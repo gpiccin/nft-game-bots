@@ -21,7 +21,7 @@ class GreenBarStrategy:
         if not self._image_processor.is_in_the_heroes_screen(image):
             return False
 
-        heroes = self._hero_reader.load_all_heroes(image)
+        heroes = self._hero_reader.load_all_heroes()
         reversed_heroes = heroes.reversed_heroes()
 
         hero_action_executor = HeroActionExecutor(self._hero_reader)
@@ -53,16 +53,16 @@ class GreenBarStrategy:
         close = self._image_processor.close(image)
 
         if close:
-            ActionExecutor.click(close.first_point())
+            ActionExecutor.click(close.single_random_point())
 
     def return_to_work(self, image):
-        close = self._image_processor.slide_down_to_return_to_work(image)
+        coin = self._image_processor.coin(image)
 
-        if close:
-            ActionExecutor.click(close.first_point())
+        if coin:
+            ActionExecutor.click(coin.single_random_point())
 
     def go_to_back(self, image):
         back = self._image_processor.back(image)
 
         if back:
-            ActionExecutor.click(back.first_point())
+            ActionExecutor.click(back.single_random_point())
