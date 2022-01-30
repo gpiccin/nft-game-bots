@@ -76,7 +76,8 @@ class Hero:
         begin_energy_bar_rect = begin_energy_bar.first_rectangle()
         end_energy_bar_rect = end_energy_bar.first_rectangle()
 
-        energy_bar_image = ImageProcessor.cut_rectangles(hero_line_image, begin_energy_bar_rect, end_energy_bar_rect)
+        energy_bar_image = ImageProcessor.cut_rectangles(hero_line_image, begin_energy_bar_rect,
+                                                         end_energy_bar_rect)
 
         return energy_bar_image
 
@@ -88,7 +89,7 @@ class Hero:
 
     @staticmethod
     def extract_hero_line_image(image, bar_rectangle: Rectangle, rest_rectangle: Rectangle):
-        hero_line = ImageProcessor.cut_rectangles(image, bar_rectangle, rest_rectangle)
+        hero_line = image[bar_rectangle.top:bar_rectangle.bottom, bar_rectangle.left:rest_rectangle.right]
         return hero_line
 
     @staticmethod

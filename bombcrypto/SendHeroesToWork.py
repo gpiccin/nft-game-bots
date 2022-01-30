@@ -1,3 +1,4 @@
+from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from modules.MethodExecutor import MethodExecutor
 from modules.ActionExecutor import ActionExecutor
@@ -5,7 +6,9 @@ from modules.TimeControl import TimeControl
 
 
 class SendHeroesToWork:
-    def __init__(self, bomb_crypto_image_processor: BombCryptoImageProcessor):
+    def __init__(self, bomb_crypto_image_processor: BombCryptoImageProcessor,
+                 action_executor: BombCryptoActionExecutor):
+        self._action_executor = action_executor
         self._time_to_check_heroes = TimeControl(60 * 20)
         self._image_processor = bomb_crypto_image_processor
 
@@ -23,9 +26,9 @@ class SendHeroesToWork:
 
         if is_go_heroes_button_visible:
             execution_result = MethodExecutor.execute(self.go_to_heroes_list,
-                                                      [self._image_processor.image],
+                                                      [self._image_processor.game_screenshot],
                                                       self._image_processor.is_in_the_heroes_screen,
-                                                      [self._image_processor.image])
+                                                      [self._image_processor.game_screenshot])
 
             if execution_result == MethodExecutor.SUCCESS:
                 self._time_to_check_heroes.start()
@@ -36,7 +39,7 @@ class SendHeroesToWork:
         go_to_heroes = self._image_processor.go_to_heroes(image)
 
         if go_to_heroes:
-            ActionExecutor.click(go_to_heroes.single_random_point())
+            self._action_executor.click(go_to_heroes.single_random_point())
             return True
 
         return False
@@ -48,13 +51,13 @@ class SendHeroesToWork:
         return MethodExecutor.execute(self.slide_to_get_access_go_heroes_button,
                                       [image],
                                       self._image_processor.is_go_to_heroes_screen,
-                                      [self._image_processor.image])
+                                      [self._image_processor.game_screenshot])
 
     def slide_to_get_access_go_heroes_button(self, image):
         slide_up_to_go_heroes = self._image_processor.slide_up_to_go_heroes(image)
 
         if slide_up_to_go_heroes:
-            ActionExecutor.click(slide_up_to_go_heroes.single_random_point())
+            self._action_executor.click(slide_up_to_go_heroes.single_random_point())
             return True
 
         return False

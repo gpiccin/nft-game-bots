@@ -1,5 +1,6 @@
 from typing import Optional
 
+from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, \
     CloseClick, BackClick, \
     SendAllHeroesToWorkClick, \
@@ -18,21 +19,22 @@ class BombCryptoImageProcessor:
                  target_images_loader: ImageLoader,
                  match_image_threshold=0.8):
         self._target_images = None
+        self._action_executor = BombCryptoActionExecutor()
         self._match_image_threshold = match_image_threshold
         self._image_provider = image_provider
         self._target_images = target_images_loader
         self._target_images.load()
 
-    def image_provider(self):
-        return self._image_provider
+    def action_executor(self):
+        return self._action_executor
 
-    def image(self):
-        print_screen_image = self.image_provider().image()
-        top_left = self.top_left_corner(print_screen_image)
+    def game_screenshot(self):
+        print_screen_image = self._image_provider.image()
+        game_screen = self.action_executor().cut_image(print_screen_image)
+        return game_screen
 
-        if top_left is None:
-            return None
-
+    def screenshot(self):
+        print_screen_image = self._image_provider.image()
         return print_screen_image
 
     def connect_wallet(self, image) -> Optional[ConnectWalletClick]:
@@ -69,18 +71,8 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def top_right_corner(self, image) -> Optional[Information]:
-        images = ['top-right-corner-0']
-        rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
-                                                         self._match_image_threshold)
-
-        if has_image:
-            return Information(rectangle)
-
-        return None
-
-    def bottom_left_corner(self, image) -> Optional[Information]:
-        images = ['bottom-left-corner-0', 'bottom-left-corner-1']
+    def bottom_right_corner(self, image) -> Optional[Information]:
+        images = ['bottom-right-corner-0', 'bottom-right-corner-1']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
                                                          self._match_image_threshold)
 

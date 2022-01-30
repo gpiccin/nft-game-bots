@@ -16,7 +16,7 @@ class BombCryptoOrchestrator:
     def read_bots(self):
         self._bots = []
 
-        image = self._bomb_crypto_image_processor.image()
+        image = self._bomb_crypto_image_processor.screenshot()
         left_corners = self._bomb_crypto_image_processor.top_left_corner(image)
 
         if left_corners is None:

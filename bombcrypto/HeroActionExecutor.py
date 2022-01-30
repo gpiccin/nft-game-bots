@@ -1,13 +1,16 @@
 import logging
 
+from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroReader import HeroReader
 from modules.ActionExecutor import ActionExecutor
 
 
 class HeroActionExecutor:
-    def __init__(self, hero_reader: HeroReader):
+    def __init__(self, hero_reader: HeroReader,
+                 action_executor: BombCryptoActionExecutor):
         self._logger = logging.getLogger(type(self).__name__)
+        self._action_executor = action_executor
         self._hero_reader = hero_reader
         self._send_to_work_attempts = 0
         self._max_send_to_work_attempts = 2
@@ -31,4 +34,4 @@ class HeroActionExecutor:
         self._send_to_work_attempts = 0
 
         if searched_hero is not None:
-            ActionExecutor.click(searched_hero.work_rectangle().random_point())
+            self._action_executor.click(searched_hero.work_rectangle().random_point())

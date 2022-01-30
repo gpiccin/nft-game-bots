@@ -1,6 +1,7 @@
 import time
 from typing import List
 
+from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroActionExecutor import HeroActionExecutor
@@ -13,7 +14,9 @@ from modules.MethodExecutor import MethodExecutor
 class GreenBarStrategy:
     def __init__(self,
                  bomb_crypto_image_processor: BombCryptoImageProcessor,
-                 heroes_reader: HeroReader):
+                 heroes_reader: HeroReader,
+                 action_executor: BombCryptoActionExecutor):
+        self._action_executor = action_executor
         self._hero_reader = heroes_reader
         self._image_processor = bomb_crypto_image_processor
         self._hero_height = 0
@@ -38,28 +41,28 @@ class GreenBarStrategy:
         self.send_heroes_to_work()
 
         execution_result = MethodExecutor.execute(self.close,
-                                                  [self._image_processor.image],
+                                                  [self._image_processor.game_screenshot],
                                                   self._image_processor.is_in_the_game_play_screen,
-                                                  [self._image_processor.image], seconds_waiting=2)
+                                                  [self._image_processor.game_screenshot], seconds_waiting=2)
 
         if execution_result == MethodExecutor.SUCCESS:
             execution_result = MethodExecutor.execute(self.return_to_work,
-                                                      [self._image_processor.image],
+                                                      [self._image_processor.game_screenshot],
                                                       self._image_processor.is_playing,
-                                                      [self._image_processor.image])
+                                                      [self._image_processor.game_screenshot])
 
             if execution_result == MethodExecutor.FAIL:
                 MethodExecutor.execute(self.go_to_back,
                                        [image],
                                        self._image_processor.is_treasure_hunt_screen,
-                                       [self._image_processor.image])
+                                       [self._image_processor.game_screenshot])
 
         return True
 
     def send_heroes_to_work(self) -> HeroList:
         while True:
             heroes = self._hero_reader.read_heroes_from_screen()
-            hero_action_executor = HeroActionExecutor(self._hero_reader)
+            hero_action_executor = HeroActionExecutor(self._hero_reader, self._action_executor)
             reversed_heroes = heroes.reversed_heroes()
 
             for hero in reversed_heroes:
@@ -75,16 +78,16 @@ class GreenBarStrategy:
         close = self._image_processor.close(image)
 
         if close:
-            ActionExecutor.click(close.single_random_point())
+            self._action_executor.click(close.single_random_point())
 
     def return_to_work(self, image):
         coin = self._image_processor.coin(image)
 
         if coin:
-            ActionExecutor.click(coin.single_random_point())
+            self._action_executor.click(coin.single_random_point())
 
     def go_to_back(self, image):
         back = self._image_processor.back(image)
 
         if back:
-            ActionExecutor.click(back.single_random_point())
+            self._action_executor.click(back.single_random_point())

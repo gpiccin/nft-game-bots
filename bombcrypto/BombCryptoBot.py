@@ -2,6 +2,7 @@ import sys
 import time
 
 from bombcrypto.AllStrategy import AllStrategy
+from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.ConnectWallet import ConnectWallet
 from bombcrypto.GenericClose import GenericClose
@@ -18,26 +19,28 @@ from modules.Rectangle import Rectangle
 class BombCryptoBot:
     def __init__(self, position: Rectangle, bomb_crypto_image_processor: BombCryptoImageProcessor):
         self.id = 'bot:' + position.to_string()
+        self._wait_seconds_after_resize_window = 5
         self.position = position
         self._bomb_crypto_image_processor = bomb_crypto_image_processor
-        self._connect_wallet = ConnectWallet(self._bomb_crypto_image_processor)
-        self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor)
-        self._go_to_heroes = SendHeroesToWork(self._bomb_crypto_image_processor)
-        self._heroes_reader = HeroReader(self._bomb_crypto_image_processor)
-        self._green_bar_strategy = GreenBarStrategy(self._bomb_crypto_image_processor, self._heroes_reader)
-        self._all_strategy = AllStrategy(self._bomb_crypto_image_processor)
-        self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor)
+        self._action_executor = bomb_crypto_image_processor.action_executor()
+        self._connect_wallet = ConnectWallet(self._bomb_crypto_image_processor, self._action_executor)
+        self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor, self._action_executor)
+        self._go_to_heroes = SendHeroesToWork(self._bomb_crypto_image_processor, self._action_executor)
+        self._heroes_reader = HeroReader(self._bomb_crypto_image_processor, self._action_executor)
+        self._green_bar_strategy = GreenBarStrategy(self._bomb_crypto_image_processor, self._heroes_reader,
+                                                    self._action_executor)
+        self._all_strategy = AllStrategy(self._bomb_crypto_image_processor, self._action_executor)
+        self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor, self._action_executor)
+        self._generic_close = GenericClose(self._bomb_crypto_image_processor, self._action_executor)
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
-        self._generic_close = GenericClose(self._bomb_crypto_image_processor)
-        self._wait_seconds_after_resize_window = 5
 
     def maximize_window(self):
-        ActionExecutor.click(self.position.random_point())
+        self._action_executor.click(self.position.random_point())
         ActionExecutor.maximize()
         time.sleep(self._wait_seconds_after_resize_window)
 
     def return_window_to_default(self):
-        image = self._bomb_crypto_image_processor.image()
+        image = self._bomb_crypto_image_processor.game_screenshot()
 
         left_corner = self._bomb_crypto_image_processor.top_left_corner(image)
 
@@ -46,35 +49,58 @@ class BombCryptoBot:
 
         left_corner_rectangle = left_corner.first_rectangle()
 
-        ActionExecutor.click(left_corner_rectangle.random_point())
+        self._action_executor.click(left_corner_rectangle.random_point())
         ActionExecutor.maximize()
         time.sleep(self._wait_seconds_after_resize_window)
 
-    def run(self):
-        image = self._bomb_crypto_image_processor.image()
+    def update_screen_position(self, image):
+        top_left = self._bomb_crypto_image_processor.top_left_corner(image)
 
-        if image is None:
+        if top_left is None:
+            self._action_executor.set_unknown_game_position()
+            return
+
+        bottom_right = self._bomb_crypto_image_processor.bottom_right_corner(image)
+
+        if bottom_right is None:
+            self._action_executor.set_unknown_game_position()
+            return
+
+        self._action_executor.set_top_left_corner(top_left)
+        self._action_executor.set_bottom_right_corner(bottom_right)
+
+    def run(self):
+        screenshot = self._bomb_crypto_image_processor.screenshot()
+
+        if screenshot is None:
             return False
 
-        if self._generic_ok.run(image):
+        self.update_screen_position(screenshot)
+
+        if not self._action_executor.is_actionable():
+            return False
+
+        game_screenshot = self._bomb_crypto_image_processor.game_screenshot()
+
+        if self._generic_ok.run(game_screenshot):
             return True
 
-        if self._connect_wallet.run(image):
+        if self._connect_wallet.run(game_screenshot):
             return True
 
-        if self._treasure_hunt.run(image):
+        if self._treasure_hunt.run(game_screenshot):
             return True
 
-        if self._go_to_heroes.run(image):
+        if self._go_to_heroes.run(game_screenshot):
             return True
 
-        if self._green_bar_strategy.run(image):
+        if self._green_bar_strategy.run(game_screenshot):
             return True
 
-        if self._unlock_heroes.run(image):
+        if self._unlock_heroes.run(game_screenshot):
             return True
 
-        if self._generic_close.run(image):
+        if self._generic_close.run(game_screenshot):
             return True
 
         sys.stdout.write('.')

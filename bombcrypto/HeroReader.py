@@ -2,6 +2,7 @@ import logging
 import time
 from typing import Optional
 
+from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroList import HeroList
@@ -10,8 +11,10 @@ from modules.Rectangle import Rectangle
 
 
 class HeroReader:
-    def __init__(self, image_processor: BombCryptoImageProcessor):
+    def __init__(self, image_processor: BombCryptoImageProcessor,
+                 action_executor: BombCryptoActionExecutor):
         self._logger = logging.getLogger(type(self).__name__)
+        self._action_executor = action_executor
         self._last_hero_point = None
         self._first_hero_point = None
         self._hero_height = None
@@ -21,22 +24,22 @@ class HeroReader:
         self._seconds_to_wait_before_read_screen = 2
 
     def scroll_up_heroes_list(self):
-        ActionExecutor.click(self._first_hero_point)
-        ActionExecutor.drag(0, 420, 0.2)
+        self._action_executor.click(self._first_hero_point)
+        self._action_executor.drag(0, 420, 0.2)
 
     def scroll_last_heroes_page(self):
-        ActionExecutor.click(self._last_hero_point)
-        ActionExecutor.drag(0, -420, 0.2)
+        self._action_executor.click(self._last_hero_point)
+        self._action_executor.drag(0, -420, 0.2)
 
     def scroll_up_middle_heroes_list(self, y_offset, duration=2.2):
-        ActionExecutor.click(self._first_hero_point)
-        ActionExecutor.drag(0, y_offset, duration)
-        ActionExecutor.click(self._first_hero_point)
+        self._action_executor.click(self._first_hero_point)
+        self._action_executor.drag(0, y_offset, duration)
+        self._action_executor.click(self._first_hero_point)
 
     def scroll_down_heroes_list(self, y_offset, duration=2.2):
-        ActionExecutor.click(self._last_hero_point)
-        ActionExecutor.drag(0, y_offset, duration)
-        ActionExecutor.click(self._first_hero_point)
+        self._action_executor.click(self._last_hero_point)
+        self._action_executor.drag(0, y_offset, duration)
+        self._action_executor.click(self._first_hero_point)
 
     def load_all_heroes(self) -> HeroList:
         heroes = HeroList()
@@ -94,7 +97,7 @@ class HeroReader:
             self._logger.info('Waiting ' + str(self._seconds_to_wait_before_read_screen) + ' seconds to read')
             time.sleep(self._seconds_to_wait_before_read_screen)
 
-        image = self._image_processor.image()
+        image = self._image_processor.game_screenshot()
         self.update_heroes_position_information(image)
 
         bars = self._image_processor.hero_bar(image)

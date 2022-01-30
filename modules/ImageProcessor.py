@@ -74,8 +74,7 @@ class ImageProcessor:
 
     @staticmethod
     def cut_rectangles(image, rectangle1: Rectangle, rectangle2: Rectangle):
-        cut_image = image[rectangle1.top:rectangle1.bottom, rectangle1.left:rectangle2.right]
-
+        cut_image = image[rectangle1.top:rectangle2.bottom, rectangle1.left:rectangle2.right]
         return cut_image
 
     @staticmethod
