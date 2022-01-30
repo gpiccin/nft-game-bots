@@ -23,7 +23,7 @@ class ImageLoader:
 
         for file in file_names:
             path = os.path.join(application_path, self.folder_path, file)
-            file_name = file[:file.find(b'.')]
+            file_name = file[:file.find('.')]
 
             image = cv2.imread(path)
 

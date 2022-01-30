@@ -6,6 +6,7 @@ from bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, Ok
     SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, SendHeroesToWorkClick, RestAllHeroesClick, \
     SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, \
     FullBarInformation, HeroLocalizationBar, BeginEnergyBarInformation, EndEnergyBarInformation
+from modules.ActionExecutor import ActionExecutor
 from modules.Behaviours import Click, Information
 from modules.ImageLoader import ImageLoader
 from modules.ImageProcessor import ImageProcessor
@@ -30,8 +31,8 @@ class BombCryptoImageProcessor:
         if top_left is None:
             return None
 
-        # ActionExecutor.click(top_left.first_rectangle().random_point())
-        # ActionExecutor.maximize()
+        ActionExecutor.click(top_left.first_rectangle().random_point())
+        ActionExecutor.maximize()
 
         return print_screen_image
 

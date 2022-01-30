@@ -35,7 +35,7 @@ class ActionExecutor:
             time.sleep(5)
             return
 
-        pyautogui.hotkey('command', 'shift', '=')
+        pyautogui.hotkey('command', 'ctrl', '=')
 
     @staticmethod
     def _move_to(x, y):
