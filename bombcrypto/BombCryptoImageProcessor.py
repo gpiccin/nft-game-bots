@@ -29,12 +29,12 @@ class BombCryptoImageProcessor:
         return self._action_executor
 
     def game_screenshot(self):
-        print_screen_image = self._image_provider.image()
+        print_screen_image = self._image_provider.screenshot()
         game_screen = self.action_executor().cut_image(print_screen_image)
         return game_screen
 
     def screenshot(self):
-        print_screen_image = self._image_provider.image()
+        print_screen_image = self._image_provider.screenshot()
         return print_screen_image
 
     def connect_wallet(self, image) -> Optional[ConnectWalletClick]:

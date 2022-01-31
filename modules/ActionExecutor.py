@@ -21,10 +21,11 @@ class ActionExecutor:
 
         if system == "Linux" or system == "Windows":
             pyautogui.hotkey('f5')
-            time.sleep(5)
+            time.sleep(10)
             return
 
         pyautogui.hotkey('command', 'shift', 'R')
+        time.sleep(10)
 
     @staticmethod
     def maximize():

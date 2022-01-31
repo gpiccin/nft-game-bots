@@ -15,9 +15,11 @@ class ConnectWallet:
         if not self._image_processor.is_connect_wallet_screen(image):
             return False
 
-        if self._image_processor.is_sign_screen(image):
+        screenshot = self._image_processor.screenshot()
+
+        if self._image_processor.is_sign_screen(screenshot):
             execution_result = MethodExecutor.execute(self.sign,
-                                                      [image],
+                                                      [screenshot],
                                                       self._image_processor.is_signed,
                                                       [self._image_processor.game_screenshot],
                                                       seconds_waiting=10)
@@ -39,7 +41,7 @@ class ConnectWallet:
         execution_result = MethodExecutor.execute(self.connect,
                                                   [image],
                                                   self._image_processor.is_sign_screen,
-                                                  [self._image_processor.game_screenshot],
+                                                  [self._image_processor.screenshot],
                                                   seconds_waiting=15)
 
         if execution_result == MethodExecutor.FAIL:
@@ -47,11 +49,11 @@ class ConnectWallet:
 
         return True
 
-    def sign(self, image):
-        sign_on_metamask_click = self._image_processor.sign_metamask(image)
+    def sign(self, screenshot):
+        sign_on_metamask_click = self._image_processor.sign_metamask(screenshot)
 
         if sign_on_metamask_click:
-            self._action_executor.click(sign_on_metamask_click.single_random_point())
+            ActionExecutor.click(sign_on_metamask_click.single_random_point())
 
     def connect(self, image):
         connect_wallet = self._image_processor.connect_wallet(image)

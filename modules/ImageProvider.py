@@ -26,7 +26,7 @@ class ImageProvider:
 
         return [ImageProvider.print_screen(1)]
 
-    def image(self):
+    def screenshot(self):
         if self._image_loader:
             if self._image_names:
                 return self.load_images([self._image_names[0]])[0]

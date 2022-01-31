@@ -1,11 +1,14 @@
+from typing import Optional
+
 from modules.ActionExecutor import ActionExecutor
+from modules.Behaviours import Information
 from modules.ImageProcessor import ImageProcessor
 
 
 class BombCryptoActionExecutor:
     def __init__(self):
-        self.bottom_right_corner = None
-        self.top_left_corner = None
+        self.bottom_right_corner:Optional[Information] = None
+        self.top_left_corner:Optional[Information] = None
 
     def set_top_left_corner(self, top_left_corner):
         self.top_left_corner = top_left_corner
@@ -25,8 +28,10 @@ class BombCryptoActionExecutor:
 
     def click(self, point):
         x, y = point
+
         screen_point = self.top_left_corner.first_rectangle().x + x, \
                        self.top_left_corner.first_rectangle().y + y
+
         ActionExecutor.click(screen_point)
 
     def drag(self, xOffset=0, yOffset=0, duration=0.0):

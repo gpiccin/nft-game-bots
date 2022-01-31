@@ -19,8 +19,8 @@ from modules.Rectangle import Rectangle
 class BombCryptoBot:
     def __init__(self, position: Rectangle, bomb_crypto_image_processor: BombCryptoImageProcessor):
         self.id = 'bot:' + position.to_string()
-        self._wait_seconds_after_resize_window = 5
-        self.position = position
+        self.top_left_position = position
+        self._wait_seconds_after_resize_window = 2.5
         self._bomb_crypto_image_processor = bomb_crypto_image_processor
         self._action_executor = bomb_crypto_image_processor.action_executor()
         self._connect_wallet = ConnectWallet(self._bomb_crypto_image_processor, self._action_executor)
@@ -35,21 +35,18 @@ class BombCryptoBot:
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
 
     def maximize_window(self):
-        self._action_executor.click(self.position.random_point())
+        ActionExecutor.click(self.top_left_position.random_point())
         ActionExecutor.maximize()
         time.sleep(self._wait_seconds_after_resize_window)
 
-    def return_window_to_default(self):
+    def return_window_size(self):
         image = self._bomb_crypto_image_processor.game_screenshot()
-
         left_corner = self._bomb_crypto_image_processor.top_left_corner(image)
 
         if left_corner is None:
             return
 
-        left_corner_rectangle = left_corner.first_rectangle()
-
-        self._action_executor.click(left_corner_rectangle.random_point())
+        self._action_executor.click(left_corner.first_rectangle().random_point())
         ActionExecutor.maximize()
         time.sleep(self._wait_seconds_after_resize_window)
 
