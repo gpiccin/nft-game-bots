@@ -18,7 +18,7 @@ from modules.Rectangle import Rectangle
 
 class BombCryptoBot:
     def __init__(self, position: Rectangle, bomb_crypto_image_processor: BombCryptoImageProcessor):
-        self.id = 'bot:' + position.to_string()
+        self.id = BombCryptoBot.create_id(position)
         self.top_left_position = position
         self._wait_seconds_after_resize_window = 2.5
         self._bomb_crypto_image_processor = bomb_crypto_image_processor
@@ -33,6 +33,10 @@ class BombCryptoBot:
         self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor, self._action_executor)
         self._generic_close = GenericClose(self._bomb_crypto_image_processor, self._action_executor)
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
+
+    @staticmethod
+    def create_id(position: Rectangle):
+        return 'bot:' + position.to_string()
 
     def maximize_window(self):
         ActionExecutor.click(self.top_left_position.random_point())
