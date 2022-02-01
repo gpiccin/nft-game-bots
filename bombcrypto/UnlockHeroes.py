@@ -1,7 +1,6 @@
 from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from modules.ActionExecutor import ActionExecutor
-from modules.MethodExecutor import MethodExecutor
+from modules.MethodExecutionResult import MethodExecutionResultFactory, MethodExecutionResult
 from modules.TimeControl import TimeControl
 
 
@@ -12,27 +11,12 @@ class UnlockHeroes:
         self._time_to_check_heroes = TimeControl(60 * 5)
         self._image_processor = bomb_crypto_image_processor
 
-    def run(self, image):
+    def run(self, image) -> MethodExecutionResult:
         if not self._time_to_check_heroes.is_expired():
-            return False
+            return MethodExecutionResultFactory.not_executed()
 
-        back = self._image_processor.back(image)
-
-        if not back:
-            return False
-
-        execution_result = MethodExecutor.execute(self.go_to_back,
-                                                  [image],
-                                                  self._image_processor.is_treasure_hunt_screen,
-                                                  [self._image_processor.game_screenshot])
-
-        if execution_result == MethodExecutor.SUCCESS:
+        if self._action_executor.go_back().is_success():
             self._time_to_check_heroes.start()
+            return MethodExecutionResultFactory.success()
 
-        return True
-
-    def go_to_back(self, image):
-        back = self._image_processor.back(image)
-
-        if back:
-            self._action_executor.click(back.single_random_point())
+        return MethodExecutionResultFactory.unknown()

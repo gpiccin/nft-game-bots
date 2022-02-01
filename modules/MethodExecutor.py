@@ -1,16 +1,14 @@
 import logging
 import time
 
+from modules.MethodExecutionResult import MethodExecutionResult, MethodExecutionResultFactory
 from modules.TimeControl import TimeControl
 
 
 class MethodExecutor:
-    SUCCESS = 1
-    FAIL = 2
-
     @staticmethod
     def execute(method, method_arguments, check_method, check_arguments,
-                max_attempts=2, seconds_waiting=4):
+                max_attempts=2, seconds_waiting=4) -> MethodExecutionResult:
 
         attempts = 0
         timer = TimeControl(seconds_waiting)
@@ -25,14 +23,14 @@ class MethodExecutor:
 
             timer.start()
             while not timer.is_expired():
-                time.sleep(0.5)
+                timer.wait()
                 confirmed = MethodExecutor._execute_method(check_method, check_arguments)
                 logger.debug('Check method ' + MethodExecutor._get_method_name(check_method) + ' = ' + str(confirmed))
 
                 if confirmed:
-                    return MethodExecutor.SUCCESS
+                    return MethodExecutionResultFactory.success()
 
-        return MethodExecutor.FAIL
+        return MethodExecutionResultFactory.fail()
 
     @staticmethod
     def _get_method_name(method):

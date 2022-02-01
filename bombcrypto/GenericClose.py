@@ -1,7 +1,6 @@
 from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
-from modules.ActionExecutor import ActionExecutor
-from modules.MethodExecutor import MethodExecutor
+from modules.MethodExecutionResult import MethodExecutionResultFactory, MethodExecutionResult
 
 
 class GenericClose:
@@ -10,21 +9,8 @@ class GenericClose:
         self._action_executor = action_executor
         self._image_processor = bomb_crypto_image_processor
 
-    def run(self, image):
-        close = self._image_processor.close(image)
+    def run(self, image) -> MethodExecutionResult:
+        if not self._image_processor.has_close_button(image):
+            return MethodExecutionResultFactory.not_executed()
 
-        if not close:
-            return False
-
-        MethodExecutor.execute(self.close,
-                               [image],
-                               self._image_processor.is_in_the_game_play_screen,
-                               [self._image_processor.game_screenshot])
-
-        return True
-
-    def close(self, image):
-        close = self._image_processor.close(image)
-
-        if close:
-            self._action_executor.click(close.single_random_point())
+        return self._action_executor.close_pop_up_on_game_play_screen()

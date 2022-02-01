@@ -4,25 +4,33 @@ import time
 from bombcrypto.AllStrategy import AllStrategy
 from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from bombcrypto.BombCryptoImageProvider import BombCryptoImageProvider
 from bombcrypto.ConnectWallet import ConnectWallet
 from bombcrypto.GenericClose import GenericClose
 from bombcrypto.GenericOk import GenericOk
 from bombcrypto.GreenBarStrategy import GreenBarStrategy
 from bombcrypto.HeroReader import HeroReader
 from bombcrypto.SendHeroesToWork import SendHeroesToWork
+from bombcrypto.Sign import Sign
 from bombcrypto.TreasureHunt import TreasureHunt
 from bombcrypto.UnlockHeroes import UnlockHeroes
 from modules.ActionExecutor import ActionExecutor
+from modules.MethodExecutionResult import MethodExecutionResultFactory, MethodExecutionResult
 from modules.Rectangle import Rectangle
 
 
 class BombCryptoBot:
-    def __init__(self, position: Rectangle, bomb_crypto_image_processor: BombCryptoImageProcessor):
+    def __init__(self, position: Rectangle,
+                 bomb_crypto_image_provider: BombCryptoImageProvider,
+                 bomb_crypto_image_processor: BombCryptoImageProcessor,
+                 action_executor: BombCryptoActionExecutor):
         self.id = BombCryptoBot.create_id(position)
         self.top_left_position = position
         self._wait_seconds_after_resize_window = 2.5
+        self._bomb_crypto_image_provider = bomb_crypto_image_provider
         self._bomb_crypto_image_processor = bomb_crypto_image_processor
-        self._action_executor = bomb_crypto_image_processor.action_executor()
+        self._action_executor = action_executor
+        self._sign = Sign(self._bomb_crypto_image_processor, self._action_executor)
         self._connect_wallet = ConnectWallet(self._bomb_crypto_image_processor, self._action_executor)
         self._treasure_hunt = TreasureHunt(self._bomb_crypto_image_processor, self._action_executor)
         self._go_to_heroes = SendHeroesToWork(self._bomb_crypto_image_processor, self._action_executor)
@@ -58,53 +66,64 @@ class BombCryptoBot:
         top_left = self._bomb_crypto_image_processor.top_left_corner(image)
 
         if top_left is None:
-            self._action_executor.set_unknown_game_position()
+            self._bomb_crypto_image_provider.set_unknown_game_position()
             return
 
         bottom_right = self._bomb_crypto_image_processor.bottom_right_corner(image)
 
         if bottom_right is None:
-            self._action_executor.set_unknown_game_position()
+            self._bomb_crypto_image_provider.set_unknown_game_position()
             return
 
-        self._action_executor.set_top_left_corner(top_left)
-        self._action_executor.set_bottom_right_corner(bottom_right)
+        self._bomb_crypto_image_provider.set_top_left_corner(top_left)
+        self._bomb_crypto_image_provider.set_bottom_right_corner(bottom_right)
 
-    def run(self):
+    def run(self) -> MethodExecutionResult:
         screenshot = self._bomb_crypto_image_processor.screenshot()
 
         if screenshot is None:
-            return False
+            return MethodExecutionResultFactory.not_executed()
 
         self.update_screen_position(screenshot)
 
-        if not self._action_executor.is_actionable():
-            return False
+        if not self._bomb_crypto_image_provider.is_actionable():
+            return MethodExecutionResultFactory.not_executed()
 
         game_screenshot = self._bomb_crypto_image_processor.game_screenshot()
 
-        if self._generic_ok.run(game_screenshot):
-            return True
+        result = self._generic_ok.run(game_screenshot)
+        if result.executed():
+            return result
 
-        if self._connect_wallet.run(game_screenshot):
-            return True
+        result = self._sign.run(game_screenshot)
+        if result.executed():
+            return result
 
-        if self._treasure_hunt.run(game_screenshot):
-            return True
+        result = self._connect_wallet.run(game_screenshot)
+        if result.executed():
+            return result
 
-        if self._go_to_heroes.run(game_screenshot):
-            return True
+        result = self._treasure_hunt.run(game_screenshot)
+        if result.executed():
+            return result
 
-        if self._green_bar_strategy.run(game_screenshot):
-            return True
+        result = self._go_to_heroes.run(game_screenshot)
+        if result.executed():
+            return result
 
-        if self._unlock_heroes.run(game_screenshot):
-            return True
+        result = self._green_bar_strategy.run(game_screenshot)
+        if result.executed():
+            return result
 
-        if self._generic_close.run(game_screenshot):
-            return True
+        result = self._unlock_heroes.run(game_screenshot)
+        if result.executed():
+            return result
+
+        result = self._generic_close.run(game_screenshot)
+        if result.executed():
+            return result
 
         sys.stdout.write('.')
         sys.stdout.flush()
 
-        return False
+        return MethodExecutionResultFactory.unknown()

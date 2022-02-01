@@ -23,10 +23,10 @@ def run():
 
 def loop(bot_orchestrator: BombCryptoOrchestrator):
     while True:
-        try:
-            bot_orchestrator.run()
-        except Exception as e:
-            logging.getLogger('start.loop').error(str(e))
+        #try:
+        bot_orchestrator.run()
+        #except Exception as e:
+        #    logging.getLogger('start.loop').error(str(e))
 
 
 if __name__ == '__main__':

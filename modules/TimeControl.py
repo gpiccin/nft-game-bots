@@ -24,3 +24,6 @@ class TimeControl:
 
     def is_expired(self):
         return not self.is_running() or self.elapsed_time() > self._seconds_to_expire
+
+    def wait(self):
+        time.sleep(0.5)

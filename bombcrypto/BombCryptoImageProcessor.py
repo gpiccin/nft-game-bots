@@ -1,41 +1,33 @@
 from typing import Optional
 
-from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoBehaviours import ConnectWalletClick, OkErrorClick, OkClick, SignOnMetamaskClick, \
     CloseClick, BackClick, \
     SendAllHeroesToWorkClick, \
     SendHeroToWorkClick, RestHeroClick, TreasureHuntClick, SendHeroesToWorkClick, RestAllHeroesClick, \
     SlideDownToGoHeroesClick, SlideUpToGoHeroesClick, \
     FullBarInformation, HeroLocalizationBar, BeginEnergyBarInformation, EndEnergyBarInformation
-from modules.ActionExecutor import ActionExecutor
+from bombcrypto.BombCryptoImageProvider import BombCryptoImageProvider
 from modules.Behaviours import Click, Information
 from modules.ImageLoader import ImageLoader
 from modules.ImageProcessor import ImageProcessor
-from modules.ImageProvider import ImageProvider
 
 
 class BombCryptoImageProcessor:
-    def __init__(self, image_provider: ImageProvider,
+    def __init__(self, image_provider: BombCryptoImageProvider,
                  target_images_loader: ImageLoader,
                  match_image_threshold=0.8):
         self._target_images = None
-        self._action_executor = BombCryptoActionExecutor()
+        self._bomb_crypto_image_provider = image_provider
         self._match_image_threshold = match_image_threshold
         self._image_provider = image_provider
         self._target_images = target_images_loader
         self._target_images.load()
 
-    def action_executor(self):
-        return self._action_executor
-
     def game_screenshot(self):
-        print_screen_image = self._image_provider.screenshot()
-        game_screen = self.action_executor().cut_image(print_screen_image)
-        return game_screen
+        return self._bomb_crypto_image_provider.game_screenshot()
 
     def screenshot(self):
-        print_screen_image = self._image_provider.screenshot()
-        return print_screen_image
+        return self._bomb_crypto_image_provider.screenshot()
 
     def connect_wallet(self, image) -> Optional[ConnectWalletClick]:
         images = ['connect-wallet-button-0', 'connect-wallet-button-1', 'connect-wallet-button-2',
@@ -271,7 +263,7 @@ class BombCryptoImageProcessor:
 
         return None
 
-    def is_go_to_heroes_screen(self, image):
+    def has_hero_icon(self, image):
         return self.go_to_heroes(image) is not None
 
     def is_in_the_heroes_screen(self, image):
@@ -296,7 +288,13 @@ class BombCryptoImageProcessor:
         return self.treasure_hunt(image) is not None
 
     def is_signed(self, image):
-        return not self.is_connect_wallet_screen(image) or self.is_treasure_hunt_screen(image)
+        return not self.has_ok_button(image) and not self.is_connect_wallet_screen(image)
+
+    def has_close_button(self, image):
+        return self.close(image) is not None
+
+    def has_ok_button(self, image):
+        return self.generic_ok(image) is not None
 
     def is_connect_wallet_screen(self, image):
         return self.connect_wallet(image) is not None

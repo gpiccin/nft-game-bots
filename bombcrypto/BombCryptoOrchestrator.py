@@ -1,9 +1,11 @@
 import logging
 import time
-from typing import List, Optional
+from typing import List, Optional, Dict
 
+from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoBot import BombCryptoBot
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
+from bombcrypto.BombCryptoImageProvider import BombCryptoImageProvider
 from modules.ImageLoader import ImageLoader
 from modules.ImageProvider import ImageProvider
 from modules.Rectangle import Rectangle
@@ -17,7 +19,7 @@ class BombCryptoOrchestrator:
         self.target_images_loader = target_images_loader
         self._bots = {}
         self._seconds_to_check_bots = 3 * 60
-        self._seconds_between_bot_execution = 2.5
+        self._seconds_between_bot_execution = 1.5
 
     def _remove_bots_not_found(self, read_keys):
         keys_to_remove = []
@@ -39,14 +41,31 @@ class BombCryptoOrchestrator:
         return keys
 
     def read_left_corners(self) -> Optional[List[Rectangle]]:
+        bomb_crypto_image_processor = self.create_bomb_crypto_image_processor()
+
         image = self._image_provider.screenshot()
-        bomb_crypto_image_processor = BombCryptoImageProcessor(self._image_provider, self.target_images_loader)
         left_corners = bomb_crypto_image_processor.top_left_corner(image)
 
         if left_corners is None:
             return None
 
         return left_corners.rectangles()
+
+    def create_bomb_crypto_image_processor(self):
+        bomb_crypto_image_provider = BombCryptoImageProvider(self._image_provider)
+        return BombCryptoImageProcessor(bomb_crypto_image_provider,
+                                        self.target_images_loader)
+
+    def create_bot(self, left_corner):
+        bomb_crypto_image_provider = BombCryptoImageProvider(self._image_provider)
+        bomb_crypto_image_processor = BombCryptoImageProcessor(bomb_crypto_image_provider,
+                                                               self.target_images_loader)
+        bomb_crypto_action_executor = BombCryptoActionExecutor(bomb_crypto_image_provider,
+                                                               bomb_crypto_image_processor)
+
+        return BombCryptoBot(left_corner, bomb_crypto_image_provider,
+                             bomb_crypto_image_processor,
+                             bomb_crypto_action_executor)
 
     def read_bots(self):
         left_corners = self.read_left_corners()
@@ -61,9 +80,7 @@ class BombCryptoOrchestrator:
             bot_id = BombCryptoBot.create_id(left_corner)
 
             if bot_id not in self._bots.keys():
-                bot_bomb_crypto_image_processor = BombCryptoImageProcessor(self._image_provider,
-                                                                           self.target_images_loader)
-                self._bots[bot_id] = BombCryptoBot(left_corner, bot_bomb_crypto_image_processor)
+                self._bots[bot_id] = self.create_bot(left_corner)
 
     def has_more_than_one_bot(self):
         return len(self._bots) > 1
@@ -72,20 +89,19 @@ class BombCryptoOrchestrator:
         self.read_bots()
 
         for bot_key in self._bots:
-            bot = self._bots[bot_key]
+            bot:BombCryptoBot = self._bots[bot_key]
             self._logger.info('Run bot ' + bot.id)
 
             if self.has_more_than_one_bot():
                 bot.maximize_window()
 
             while True:
-                if not bot.run():
-                    break
-                else:
+                if bot.run().executed():
                     self._logger.info('Waiting ' + str(self._seconds_between_bot_execution) +
                                       ' seconds to execute a new bot ' + bot.id + ' command')
-
                     time.sleep(self._seconds_between_bot_execution)
+                else:
+                    break
 
             if self.has_more_than_one_bot():
                 bot.return_window_size()
