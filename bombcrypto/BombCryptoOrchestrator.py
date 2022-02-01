@@ -20,7 +20,7 @@ class BombCryptoOrchestrator:
         self.target_images_loader = target_images_loader
         self._bots = {}
         self._seconds_to_check_bots = 3 * 60
-        self._seconds_between_bot_execution = 1.5
+        self._seconds_between_bot_execution = 1
         self._max_seconds_waiting_bot_actions = 10 * 60
 
     def _remove_bots_not_found(self, read_keys):

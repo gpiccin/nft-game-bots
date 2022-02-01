@@ -6,7 +6,6 @@ from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroList import HeroList
-from modules.ActionExecutor import ActionExecutor
 from modules.Rectangle import Rectangle
 
 
@@ -21,7 +20,7 @@ class HeroReader:
         self._image_processor = image_processor
         self._first_scroll_y_offset = -324
         self._second_scroll_y_offset = -300
-        self._seconds_to_wait_before_read_screen = 2
+        self._seconds_to_wait_before_read_screen = 1.6
 
     def scroll_up_heroes_list(self):
         self._action_executor.click(self._first_hero_point)

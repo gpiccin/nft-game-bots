@@ -3,7 +3,6 @@ import logging
 from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroReader import HeroReader
-from modules.ActionExecutor import ActionExecutor
 
 
 class HeroActionExecutor:

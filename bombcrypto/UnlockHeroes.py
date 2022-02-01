@@ -16,7 +16,8 @@ class UnlockHeroes:
             return MethodExecutionResultFactory.not_executed()
 
         if self._action_executor.go_back().is_success():
-            self._time_to_check_heroes.start()
-            return MethodExecutionResultFactory.success()
+            if self._action_executor.go_to_treasure_hunt().is_success():
+                self._time_to_check_heroes.start()
+                return MethodExecutionResultFactory.success()
 
         return MethodExecutionResultFactory.unknown()

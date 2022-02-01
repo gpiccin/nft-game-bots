@@ -4,7 +4,6 @@ from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.Hero import Hero
 from bombcrypto.HeroActionExecutor import HeroActionExecutor
-from bombcrypto.HeroList import HeroList
 from bombcrypto.HeroReader import HeroReader
 from modules.MethodExecutionResult import MethodExecutionResult, MethodExecutionResultFactory
 
@@ -17,6 +16,7 @@ class GreenBarStrategy:
         self._action_executor = action_executor
         self._hero_reader = heroes_reader
         self._image_processor = bomb_crypto_image_processor
+        self._seconds_waiting_before_scroll_list = 1.5
 
     def run(self, image) -> MethodExecutionResult:
         if not self._image_processor.is_in_the_heroes_screen(image):
@@ -27,12 +27,12 @@ class GreenBarStrategy:
         count_of_heroes_sent_to_work = self.send_heroes_to_work()
 
         if count_of_heroes_sent_to_work < 10:
-            time.sleep(2)
+            time.sleep(self._seconds_waiting_before_scroll_list)
             self._hero_reader.scroll_up_middle_heroes_list(325)
             count_of_heroes_sent_to_work += self.send_heroes_to_work()
 
         if count_of_heroes_sent_to_work < 5:
-            time.sleep(2)
+            time.sleep(self._seconds_waiting_before_scroll_list)
             self._hero_reader.scroll_up_heroes_list()
             self.send_heroes_to_work()
 
