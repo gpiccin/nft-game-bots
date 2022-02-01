@@ -24,22 +24,26 @@ class GreenBarStrategy:
 
         self._hero_reader.update_heroes_position_information(image)
         self._hero_reader.scroll_last_heroes_page()
-        self.send_heroes_to_work()
+        count_of_heroes_sent_to_work = self.send_heroes_to_work()
 
-        time.sleep(2)
-        self._hero_reader.scroll_up_middle_heroes_list(325)
-        self.send_heroes_to_work()
+        if count_of_heroes_sent_to_work < 10:
+            time.sleep(2)
+            self._hero_reader.scroll_up_middle_heroes_list(325)
+            count_of_heroes_sent_to_work += self.send_heroes_to_work()
 
-        time.sleep(2)
-        self._hero_reader.scroll_up_heroes_list()
-        self.send_heroes_to_work()
+        if count_of_heroes_sent_to_work < 5:
+            time.sleep(2)
+            self._hero_reader.scroll_up_heroes_list()
+            self.send_heroes_to_work()
 
         if self._action_executor.close_pop_up_on_game_play_screen().is_success():
             return self._action_executor.return_heroes_to_work()
 
         return MethodExecutionResultFactory.unknown()
 
-    def send_heroes_to_work(self) -> HeroList:
+    def send_heroes_to_work(self) -> int:
+        count_of_heroes_sent_to_work = 0
+
         while True:
             heroes = self._hero_reader.read_heroes_from_screen()
             hero_action_executor = HeroActionExecutor(self._hero_reader, self._action_executor)
@@ -48,8 +52,9 @@ class GreenBarStrategy:
             for hero in reversed_heroes:
                 if hero.energy_level != Hero.RED_ENERGY:
                     hero_action_executor.send_to_work(hero)
+                    count_of_heroes_sent_to_work += 1
 
             if heroes.count_of_heroes_to_work() == 0:
                 break
 
-        return heroes
+        return count_of_heroes_sent_to_work

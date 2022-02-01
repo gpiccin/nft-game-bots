@@ -9,6 +9,7 @@ from bombcrypto.BombCryptoImageProvider import BombCryptoImageProvider
 from modules.ImageLoader import ImageLoader
 from modules.ImageProvider import ImageProvider
 from modules.Rectangle import Rectangle
+from modules.TimeControl import TimeControl
 
 
 class BombCryptoOrchestrator:
@@ -20,6 +21,7 @@ class BombCryptoOrchestrator:
         self._bots = {}
         self._seconds_to_check_bots = 3 * 60
         self._seconds_between_bot_execution = 1.5
+        self._max_seconds_waiting_bot_actions = 10 * 60
 
     def _remove_bots_not_found(self, read_keys):
         keys_to_remove = []
@@ -95,7 +97,10 @@ class BombCryptoOrchestrator:
             if self.has_more_than_one_bot():
                 bot.maximize_window()
 
-            while True:
+            time_running_bot = TimeControl(self._max_seconds_waiting_bot_actions)
+            time_running_bot.start()
+
+            while not time_running_bot.is_expired():
                 if bot.run().executed():
                     self._logger.info('Waiting ' + str(self._seconds_between_bot_execution) +
                                       ' seconds to execute a new bot ' + bot.id + ' command')
