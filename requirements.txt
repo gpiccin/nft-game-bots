@@ -7,3 +7,4 @@ PyScreeze==0.1.28
 PyYAML==6.0
 pyautogui==0.9.53
 PySimpleGUI==4.56.0
+tornado==6.1

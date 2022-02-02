@@ -84,7 +84,7 @@ class BombCryptoImageProcessor:
         return None
 
     def sign_metamask(self, image) -> Optional[SignOnMetamaskClick]:
-        images = ['sign-metamask-0', 'sign-metamask-1']
+        images = ['sign-metamask-0', 'sign-metamask-pt-br-0', 'sign-metamask-1']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
                                                          self._match_image_threshold)
 

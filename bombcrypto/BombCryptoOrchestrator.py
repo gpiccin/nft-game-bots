@@ -19,7 +19,7 @@ class BombCryptoOrchestrator:
         self._image_provider = image_provider
         self.target_images_loader = target_images_loader
         self._bots = {}
-        self._seconds_to_check_bots = 3 * 60
+        self._seconds_to_check_bots = 1
         self._seconds_between_bot_execution = 1
         self._max_seconds_waiting_bot_actions = 10 * 60
 
@@ -87,7 +87,14 @@ class BombCryptoOrchestrator:
     def has_more_than_one_bot(self):
         return len(self._bots) > 1
 
-    def run(self):
+    def start(self):
+        while True:
+            try:
+                self._run()
+            except Exception as e:
+                self._logger.error(str(e))
+
+    def _run(self):
         self.read_bots()
 
         for bot_key in self._bots:
