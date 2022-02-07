@@ -10,15 +10,27 @@ from modules.Rectangle import Rectangle
 
 class ImageProcessor:
     @staticmethod
-    def match_list(source_image, image_loader: ImageLoader, images, threshold, use_gray_scale=True):
+    def match_list(source_image, image_loader: ImageLoader, images, threshold, use_gray_scale=True, check_all_images=False):
+        rectangles = []
+
         for image_name in images:
-            rectangles, image_found = ImageProcessor.match(source_image, image_loader.get_image(image_name),
+            matched_rectangles, image_found = ImageProcessor.match(source_image, image_loader.get_image(image_name),
                                                            threshold, use_gray_scale)
 
-            if image_found:
-                return rectangles, image_found
+            if not check_all_images and image_found:
+                return matched_rectangles, image_found
+            else:
+                for matched_rectangle in matched_rectangles:
+                    found = False
 
-        return [], False
+                    for rectangle in rectangles:
+                        if matched_rectangle == rectangle:
+                            found = True
+
+                    if not found:
+                        rectangles.append(matched_rectangle)
+
+        return rectangles, len(rectangles) > 0
 
     @staticmethod
     def closest_color(list_of_colors, color):

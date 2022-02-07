@@ -6,6 +6,7 @@ from bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from bombcrypto.BombCryptoImageProvider import BombCryptoImageProvider
 from bombcrypto.ConnectWallet import ConnectWallet
+from bombcrypto.Error import Error
 from bombcrypto.GenericClose import GenericClose
 from bombcrypto.GenericOk import GenericOk
 from bombcrypto.GreenBarStrategy import GreenBarStrategy
@@ -17,6 +18,7 @@ from bombcrypto.UnlockHeroes import UnlockHeroes
 from modules.ActionExecutor import ActionExecutor
 from modules.MethodExecutionResult import MethodExecutionResultFactory, MethodExecutionResult
 from modules.Rectangle import Rectangle
+from modules.TimeControl import TimeControl
 
 
 class BombCryptoBot:
@@ -27,6 +29,7 @@ class BombCryptoBot:
         self.id = BombCryptoBot.create_id(position)
         self.top_left_position = position
         self._wait_seconds_after_resize_window = 2.5
+        self._inactivity_timer = TimeControl(10 * 60)
         self._bomb_crypto_image_provider = bomb_crypto_image_provider
         self._bomb_crypto_image_processor = bomb_crypto_image_processor
         self._action_executor = action_executor
@@ -41,6 +44,7 @@ class BombCryptoBot:
         self._unlock_heroes = UnlockHeroes(self._bomb_crypto_image_processor, self._action_executor)
         self._generic_close = GenericClose(self._bomb_crypto_image_processor, self._action_executor)
         self._generic_ok = GenericOk(self._bomb_crypto_image_processor)
+        self._error = Error(self._bomb_crypto_image_processor)
 
     @staticmethod
     def create_id(position: Rectangle):
@@ -91,39 +95,52 @@ class BombCryptoBot:
 
         game_screenshot = self._bomb_crypto_image_processor.game_screenshot()
 
+        result = self._error.run(game_screenshot)
+        if result.executed():
+            self._inactivity_timer.start()
+            return result
+
         result = self._generic_ok.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
         result = self._sign.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
         result = self._connect_wallet.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
         result = self._treasure_hunt.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
         result = self._go_to_heroes.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
         result = self._green_bar_strategy.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
         result = self._unlock_heroes.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
         result = self._generic_close.run(game_screenshot)
         if result.executed():
+            self._inactivity_timer.start()
             return result
 
-        sys.stdout.write('.')
-        sys.stdout.flush()
+        if self._inactivity_timer.is_expired():
+            ActionExecutor.refresh_page()
 
         return MethodExecutionResultFactory.unknown()

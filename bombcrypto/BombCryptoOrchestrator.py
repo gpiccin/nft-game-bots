@@ -19,7 +19,7 @@ class BombCryptoOrchestrator:
         self._image_provider = image_provider
         self.target_images_loader = target_images_loader
         self._bots = {}
-        self._seconds_to_check_bots = 1
+        self._seconds_to_check_bots = 4 * 60
         self._seconds_between_bot_execution = 1
         self._max_seconds_waiting_bot_actions = 10 * 60
 

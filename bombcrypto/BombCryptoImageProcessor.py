@@ -19,6 +19,7 @@ class BombCryptoImageProcessor:
         self._target_images = None
         self._bomb_crypto_image_provider = image_provider
         self._match_image_threshold = match_image_threshold
+        self._left_corner_match_image_threshold = 0.85
         self._image_provider = image_provider
         self._target_images = target_images_loader
         self._target_images.load()
@@ -41,7 +42,7 @@ class BombCryptoImageProcessor:
         return None
 
     def error(self, image) -> Optional[OkErrorClick]:
-        images = ['error-0', 'error-1001-0', 'error-server-unstable-0']
+        images = ['error-0', 'error-app-crash-0', 'error-1001-0', 'error-server-unstable-0']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
                                                          self._match_image_threshold)
 
@@ -54,9 +55,10 @@ class BombCryptoImageProcessor:
         return None
 
     def top_left_corner(self, image) -> Optional[Information]:
-        images = ['top-left-corner-2', 'top-left-corner-1', 'top-left-corner-0']
+        images = ['top-left-corner-2', 'top-left-corner-0', 'top-left-corner-3']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
-                                                         self._match_image_threshold)
+                                                         self._left_corner_match_image_threshold,
+                                                         check_all_images=True)
 
         if has_image:
             return Information(rectangle)
@@ -265,6 +267,9 @@ class BombCryptoImageProcessor:
 
     def has_hero_icon(self, image):
         return self.go_to_heroes(image) is not None
+
+    def is_error(self, image):
+        return self.error(image) is not None
 
     def is_in_the_heroes_screen(self, image):
         return self.hero_bar(image) is not None

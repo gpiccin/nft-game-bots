@@ -1,5 +1,6 @@
-import logging
 import multiprocessing
+
+import yaml
 
 from bombcrypto.BombCryptoOrchestrator import BombCryptoOrchestrator
 from core import logging_config
@@ -8,6 +9,11 @@ from modules.ImageProvider import ImageProvider
 from ui.server.WebServer import WebServer
 
 logging_config.setup()
+
+# Load config file.
+stream = open("config.yaml", 'r')
+config = yaml.safe_load(stream)
+image_analysis_config = config['image_analysis']
 
 
 def start_bot_orchestrator():
