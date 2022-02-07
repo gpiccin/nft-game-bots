@@ -6,6 +6,7 @@ from source.bombcrypto.BombCryptoActionExecutor import BombCryptoActionExecutor
 from source.bombcrypto.BombCryptoBot import BombCryptoBot
 from source.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from source.bombcrypto.BombCryptoImageProvider import BombCryptoImageProvider
+from source.modules.Configurations import Configurations
 from source.modules.ImageLoader import ImageLoader
 from source.modules.ImageProvider import ImageProvider
 from source.modules.Rectangle import Rectangle
@@ -14,7 +15,8 @@ from source.modules.TimeControl import TimeControl
 
 class BombCryptoOrchestrator:
     def __init__(self, image_provider: ImageProvider,
-                 target_images_loader: ImageLoader):
+                 target_images_loader: ImageLoader,
+                 configurations: Configurations):
         self._logger = logging.getLogger(type(self).__name__)
         self._image_provider = image_provider
         self.target_images_loader = target_images_loader
@@ -22,6 +24,7 @@ class BombCryptoOrchestrator:
         self._seconds_to_check_bots = 4 * 60
         self._seconds_between_bot_execution = 1
         self._max_seconds_waiting_bot_actions = 10 * 60
+        self._configurations = configurations
 
     def _remove_bots_not_found(self, read_keys):
         keys_to_remove = []
@@ -56,18 +59,19 @@ class BombCryptoOrchestrator:
     def create_bomb_crypto_image_processor(self):
         bomb_crypto_image_provider = BombCryptoImageProvider(self._image_provider)
         return BombCryptoImageProcessor(bomb_crypto_image_provider,
-                                        self.target_images_loader)
+                                        self.target_images_loader,
+                                        match_image_threshold=self._configurations.image_analysis_accuracy())
 
     def create_bot(self, left_corner):
-        bomb_crypto_image_provider = BombCryptoImageProvider(self._image_provider)
-        bomb_crypto_image_processor = BombCryptoImageProcessor(bomb_crypto_image_provider,
-                                                               self.target_images_loader)
-        bomb_crypto_action_executor = BombCryptoActionExecutor(bomb_crypto_image_provider,
-                                                               bomb_crypto_image_processor)
+        image_provider = BombCryptoImageProvider(self._image_provider)
+        image_processor = BombCryptoImageProcessor(image_provider,
+                                                   self.target_images_loader,
+                                                   match_image_threshold=self._configurations.image_analysis_accuracy())
+        action_executor = BombCryptoActionExecutor(image_provider, image_processor)
 
-        return BombCryptoBot(left_corner, bomb_crypto_image_provider,
-                             bomb_crypto_image_processor,
-                             bomb_crypto_action_executor)
+        return BombCryptoBot(left_corner, image_provider,
+                             image_processor,
+                             action_executor)
 
     def read_bots(self):
         left_corners = self.read_left_corners()

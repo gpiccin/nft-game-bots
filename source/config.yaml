@@ -1,2 +1,2 @@
 image_analysis:
-    threshold: 0.8
+    accuracy: 0.8
