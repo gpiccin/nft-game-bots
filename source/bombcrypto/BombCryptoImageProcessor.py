@@ -53,7 +53,7 @@ class BombCryptoImageProcessor:
         return None
 
     def top_left_corner(self, image) -> Optional[Information]:
-        images = ['top-left-corner-2', 'top-left-corner-0', 'top-left-corner-3']
+        images = ['top-left-corner-2', 'top-left-corner-3']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
                                                          self._left_corner_match_image_threshold,
                                                          check_all_images=True)

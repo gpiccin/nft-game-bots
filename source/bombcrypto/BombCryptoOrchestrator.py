@@ -8,6 +8,7 @@ from source.bombcrypto.BombCryptoImageProcessor import BombCryptoImageProcessor
 from source.bombcrypto.BombCryptoImageProvider import BombCryptoImageProvider
 from source.modules.Configurations import Configurations
 from source.modules.ImageLoader import ImageLoader
+from source.modules.ImageProcessor import ImageProcessor
 from source.modules.ImageProvider import ImageProvider
 from source.modules.Rectangle import Rectangle
 from source.modules.TimeControl import TimeControl
@@ -51,6 +52,10 @@ class BombCryptoOrchestrator:
         image = self._image_provider.screenshot()
         left_corners = bomb_crypto_image_processor.top_left_corner(image)
 
+        # copied = image.copy()
+        # ImageProcessor.draw_rectangles(copied, left_corners.rectangles())
+        # ImageProcessor.show(copied)
+
         if left_corners is None:
             return None
 
@@ -93,10 +98,10 @@ class BombCryptoOrchestrator:
 
     def start(self):
         while True:
-            try:
-                self._run()
-            except Exception as e:
-                self._logger.error(str(e))
+            #try:
+            self._run()
+            #except Exception as e:
+            #    self._logger.error(str(e))
 
     def _run(self):
         self.read_bots()
