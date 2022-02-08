@@ -22,6 +22,9 @@ class Rectangle(Rect):
     def to_string(self):
         return str(self.top) + ':' + str(self.left)
 
+    def rectangle(self):
+        return self.x, self.y, self.width, self.height
+
     @staticmethod
     def create_list(rectangles, enable_float=False, read_only=False, on_change=None, on_read=None) -> []:
         new_rectangles = []
