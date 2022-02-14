@@ -24,6 +24,10 @@ class BombCryptoImageProvider:
         return self.top_left_corner is not None and self.bottom_right_corner is not None
 
     def cut_image(self, image):
+        if self.top_left_corner is None or \
+                self.bottom_right_corner is None:
+            return image
+
         return ImageProcessor.cut_rectangles(image, self.top_left_corner.first_rectangle(),
                                              self.bottom_right_corner.first_rectangle())
 

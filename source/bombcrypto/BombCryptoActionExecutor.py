@@ -14,8 +14,11 @@ class BombCryptoActionExecutor:
     def click(self, point):
         x, y = point
 
-        screen_point = self._bomb_crypto_image_provider.top_left_corner.first_rectangle().x + x, \
-                       self._bomb_crypto_image_provider.top_left_corner.first_rectangle().y + y
+        if self._bomb_crypto_image_provider.top_left_corner is None:
+            return
+
+        screen_point = self._bomb_crypto_image_provider.top_left_corner.first_rectangle().left + x, \
+                       self._bomb_crypto_image_provider.top_left_corner.first_rectangle().top + y
 
         ActionExecutor.click(screen_point)
 

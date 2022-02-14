@@ -106,6 +106,8 @@ class BombCryptoOrchestrator:
     def _run(self):
         self.read_bots()
 
+        self._logger.info(str(len(self._bots)) + ' bots identified')
+
         for bot_key in self._bots:
             bot: BombCryptoBot = self._bots[bot_key]
             self._logger.info('Run bot ' + bot.id)

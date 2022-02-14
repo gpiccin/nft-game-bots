@@ -16,6 +16,9 @@ class UnlockHeroes:
         if not self._time_to_check_heroes.is_expired():
             return MethodExecutionResultFactory.not_executed()
 
+        if not self._image_processor.is_in_the_game_play_screen(image):
+            return MethodExecutionResultFactory.not_executed()
+
         if self._action_executor.go_back().is_success():
             if self._action_executor.go_to_treasure_hunt().is_success():
                 self._time_to_check_heroes.start()

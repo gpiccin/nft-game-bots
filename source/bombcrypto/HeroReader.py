@@ -148,6 +148,9 @@ class HeroReader:
     def update_heroes_position_information(self, image):
         bars = self._image_processor.hero_bar(image)
 
+        if bars is None:
+            return
+
         first_bar = bars.first_rectangle()
 
         self._first_hero_point = (first_bar.left - 5, first_bar.top)

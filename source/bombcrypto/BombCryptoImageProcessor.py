@@ -17,7 +17,7 @@ class BombCryptoImageProcessor:
         self._target_images = None
         self._bomb_crypto_image_provider = image_provider
         self._match_image_threshold = match_image_threshold
-        self._left_corner_match_image_threshold = 0.85
+        self._left_corner_match_image_threshold = 0.8
         self._image_provider = image_provider
         self._target_images = target_images_loader
         self._target_images.load()
@@ -53,10 +53,10 @@ class BombCryptoImageProcessor:
         return None
 
     def top_left_corner(self, image) -> Optional[Information]:
-        images = ['top-left-corner-2', 'top-left-corner-3']
+        images = ['top-left-corner-1', 'top-left-corner-1']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
                                                          self._left_corner_match_image_threshold,
-                                                         check_all_images=True)
+                                                         check_all_images=False)
 
         if has_image:
             return Information(rectangle)
@@ -144,9 +144,9 @@ class BombCryptoImageProcessor:
         return None
 
     def treasure_hunt(self, image) -> Optional[TreasureHuntClick]:
-        images = ['treasure-hunt-0', 'treasure-hunt-1']
+        images = ['treasure-hunt-0', 'treasure-hunt-1', 'treasure-hunt-2']
         rectangle, has_image = ImageProcessor.match_list(image, self._target_images, images,
-                                                         self._match_image_threshold)
+                                                         0.7)
 
         if has_image:
             return TreasureHuntClick(rectangle)
